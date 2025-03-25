@@ -1,0 +1,13 @@
+{
+ "headings":{
+ 	"title":"<BUMPGUN>",
+ 	"mapchoose":"<CHOOSE AREA>",
+ 	"no ammo":"NO AMMO",
+ 	"placeholder":"BOPPIN",
+ 	"start level":"LEVEL ",
+ 	"start":" START"
+ },
+ "buttons":{
+ 	"startgame":"{Start Game}"
+ }
+}

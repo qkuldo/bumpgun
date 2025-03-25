@@ -1,0 +1,40 @@
+{
+	"sfx": {
+		"sound effects":{	
+			"jump":"assets/sfx/jump.wav",
+			"wall hit":"assets/sfx/wallhit.wav",
+			"gunfire":"assets/sfx/gunfire.wav",
+			"no ammo":"assets/sfx/noammo.wav",
+			"gun wall hit":"assets/sfx/gunwallhit.wav"
+		},
+		"music":{
+			"factory":[
+				"assets/sfx/FACTORY1.wav"
+			]
+		}
+	},
+	"images": {
+		"hud": {
+			"customiser arrows":"assets/images/hud/customization arrows.png",
+			"mouse":"assets/images/hud/mouse.png",
+			"throw arrow":"assets/images/hud/throw arrow.png",
+			"factory":"assets/images/hud/factory_icon.png",
+			"ammo bar":"assets/images/hud/ammo.png",
+			"hud icons":"assets/images/hud/gameicons.png",
+			"mouse hover":"assets/images/hud/mouse_canclick.png"
+		},
+		"enemies":{
+			"frogiea":{"img path":"assets/images/enemies/Frogeia/frogeia.png","img size":[42,36],"frames":9}
+		},
+		"projectiles": {
+			"player bullet":"assets/images/projectiles/player_bullet.png"
+		},
+		"skins": {
+			"default":"assets/images/skins/default/player_skin1.png"
+		},
+		"environment":{
+			"factory floor":"assets/images/environment/factory_floor.png",
+			"lights":"assets/images/environment/lights.png"
+		}
+	}
+}
