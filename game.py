@@ -174,6 +174,7 @@ def game():
 	#throw_arrow.set_alpha(225)
 	player = copy.copy(current_skin)
 	player = mods.Player(player,[300,300],1,(50,50),speed=0.8)
+	player.hp = 10
 	throw_arrow_rect = throw_arrow.get_rect(x=300,y=300)
 	particles = []
 	screenshake_duration = 0
@@ -206,6 +207,9 @@ def game():
 	effect_queue = []
 	#test_sprite = mods.Sprite(enemy_spritesheets[0],[300,300],1,(50,50))
 	hp_rect = pg.Rect(80,135,22,80)
+	shadow_hp_rect = pg.Rect(80,135,22,80)
+	shadow_hp_rect.height = 80
+	shadow_hp_rect.bottomleft = (64,190)
 	hp_rect.center = (75,150)
 	enemies.append(mods.Enemy(enemy_spritesheets[0],[200,300],1,(50,50)))
 	while True:
@@ -378,7 +382,8 @@ def game():
 				ammo_sprite.draw(screen,[11])
 			hp_rect.height = player.hp * 4
 			hp_rect.bottomleft = (64,190)
-			pg.draw.rect(screen,(255,176,71),hp_rect)
+			pg.draw.rect(screen,(204,100,71),shadow_hp_rect)
+			pg.draw.rect(screen,(255,126,71),hp_rect)
 			if (player.mode == 0):
 				gun_power_sprite.draw(screen,[0])
 			elif (player.mode == 1 and player.ammo > 0):
