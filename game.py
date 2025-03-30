@@ -167,6 +167,11 @@ def render_stack(surf,images,pos,rotation,spread=1,scale=()):
 def play(environment,track,loops = -1):
 	pg.mixer.music.load(music[environment][track])
 	pg.mixer.music.play(loops)
+def refresh_particles(particles):
+	for location,particle in sorted(enumerate(particles),reverse=True):
+			is_die = particle.update(screen)
+			if (is_die):
+				particles.pop(location)
 def game():
 	fade()
 	global trauma
@@ -313,10 +318,7 @@ def game():
 			current_sequence = sequences["LEVELGAME"]
 		player.special_update(screen)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
-		for location,particle in sorted(enumerate(particles),reverse=True):
-			is_die = particle.update(screen)
-			if (is_die):
-				particles.pop(location)
+		refresh_particles(particles)
 		for location,projectile in sorted(enumerate(player_projectiles),reverse=True):
 			is_die = projectile.update_life()
 			projectile.update(-goto_angle(projectile.speed,projectile.angle))
@@ -331,7 +333,8 @@ def game():
 						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 					enemy.hp -= 1
 					player_projectiles.pop(location)
-				break
+					trauma += 3
+					break
 			if (is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (player_projectiles != []):
 					player_projectiles.pop(location)
