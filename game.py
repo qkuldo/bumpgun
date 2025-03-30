@@ -223,6 +223,33 @@ def refresh_enemies(screen,enemies,floor,particles,player):
 				for i in range(random.randint(3,5),random.randint(7,10)):
 					white_random = random.randint(200,225)
 					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
+def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
+	global trauma
+	if (player.mode == 0):
+		player.start_jump()
+		sound_effects["jump"].play()
+		player.paction_cooldown = 20
+		for i in range(random.randint(3,5),random.randint(7,10)):
+			white_random = random.randint(200,225)
+			particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+	elif (player.mode == 1 and player.ammo > 0):
+		player.fire()
+		sound_effects["gunfire"].play()
+		trauma += 5
+		screenshake_duration = 8
+		player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
+		for i in range(random.randint(3,5),random.randint(7,10)):
+			white_random = random.randint(200,225)
+			particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
+		if (player.ammo <= 0):
+			heading.invisible = False
+			heading_timer = 120
+			heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
+	elif (player.mode == 1 and player.ammo == 0):
+		sound_effects["no ammo"].play()
+		player.paction_cooldown = 30
+		trauma += 0.5
+		screenshake_duration = 8
 def game():
 	fade()
 	global trauma
@@ -287,31 +314,7 @@ def game():
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
 		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
-			if (player.mode == 0):
-				player.start_jump()
-				sound_effects["jump"].play()
-				player.paction_cooldown = 20
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
-			elif (player.mode == 1 and player.ammo > 0):
-				player.fire()
-				sound_effects["gunfire"].play()
-				trauma += 5
-				screenshake_duration = 8
-				player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
-				if (player.ammo <= 0):
-					heading.invisible = False
-					heading_timer = 120
-					heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
-			elif (current_sequence == sequences["LEVELGAME"] and player.mode == 1 and player.ammo == 0):
-				sound_effects["no ammo"].play()
-				player.paction_cooldown = 30
-				trauma = 0.5
-				screenshake_duration = 8
+			player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
 			if (player.mode == 0):
 				player.mode = 1
