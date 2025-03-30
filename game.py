@@ -340,12 +340,7 @@ def game():
 		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
 			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
-			if (player.mode == 0):
-				player.mode = 1
-			elif (player.mode == 1):
-				player.mode = 0
-			player.modechange_cooldown = 15
-			player.paction_cooldown = 0
+			player.change_mode()
 		#TEST CODE
 		#if (keys[pg.K_v]):
 		#	enemies.append(mods.Enemy(enemy_spritesheets[0],[200,300],1,(50,50)))
