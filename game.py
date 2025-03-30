@@ -197,6 +197,32 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles):
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
 						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+def refresh_enemies(screen,enemies,floor,particles,player):
+	global trauma
+	for location,enemy in sorted(enumerate(enemies),reverse=True):
+			if (not floor.hitbox.contains(enemy.hitbox)):
+				if (enemy.pos[0] > floor.hitbox.center[0]):
+					enemy.pos[0] -= 2
+				if (enemy.pos[0] < floor.hitbox.center[0]):
+					enemy.pos[0] += 2
+				if (enemy.pos[1] > floor.hitbox.center[1]):
+					enemy.pos[1] -= 2
+				if (enemy.pos[1] < floor.hitbox.center[1]):
+					enemy.pos[1] += 2
+				if (enemy.dmg_frames > 0):	
+					enemy.pocket_mode = 1
+				else:
+					enemy.mode = 1
+				enemy.vel = [0,0]
+				if (not enemy.on_wall):
+					sound_effects["wall hit"].play()
+					enemy.on_wall = True
+			enemy.special_update(screen,target_pos=player.pos)
+			if (enemy.hp <= 0):
+				enemies.pop(location)
+				for i in range(random.randint(3,5),random.randint(7,10)):
+					white_random = random.randint(200,225)
+					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 def game():
 	fade()
 	global trauma
@@ -328,7 +354,6 @@ def game():
 			if (player.pos[1] < floor.hitbox.center[1]):
 				player.pos[1] += 2
 		floor.update()
-		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 		if (player.jumping):
 			trauma += 0.5
 		if (current_sequence == sequences["LEVELINTRO"] and floor.angle != 360):
@@ -341,39 +366,14 @@ def game():
 			level_flash.invisible = True
 			play("factory",0)
 			current_sequence = sequences["LEVELGAME"]
-		player.special_update(screen)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
-		refresh_particles(particles)
-		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
-		for location,enemy in sorted(enumerate(enemies),reverse=True):
-			if (not floor.hitbox.contains(enemy.hitbox)):
-				if (enemy.pos[0] > floor.hitbox.center[0]):
-					enemy.pos[0] -= 2
-				if (enemy.pos[0] < floor.hitbox.center[0]):
-					enemy.pos[0] += 2
-				if (enemy.pos[1] > floor.hitbox.center[1]):
-					enemy.pos[1] -= 2
-				if (enemy.pos[1] < floor.hitbox.center[1]):
-					enemy.pos[1] += 2
-				if (enemy.dmg_frames > 0):	
-					enemy.pocket_mode = 1
-				else:
-					enemy.mode = 1
-				enemy.vel = [0,0]
-				if (not enemy.on_wall):
-					sound_effects["wall hit"].play()
-					enemy.on_wall = True
-			enemy.special_update(screen,target_pos=player.pos)
-			if (enemy.hp <= 0):
-				enemies.pop(location)
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 		if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
 			heading.invisible = True
-		if (screenshake_duration > 0):
-			screenshake()
-			screenshake_duration -= 1
+		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+		refresh_particles(particles)
+		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
+		refresh_enemies(screen,enemies,floor,particles,player)
+		player.special_update(screen)
 		level_flash.draw(screen)
 		if (player.fired):
 			player.muzzle = 10
@@ -406,6 +406,9 @@ def game():
 			if (frames > 60):
 				frames = 0
 		clicked = False
+		if (screenshake_duration > 0):
+			screenshake()
+			screenshake_duration -= 1
 		if (fadein):
 			fade2()
 			fadein = not fadein
