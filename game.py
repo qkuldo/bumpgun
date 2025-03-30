@@ -242,15 +242,15 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 			white_random = random.randint(200,225)
 			particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
 		if (player.ammo <= 0):
-			heading.invisible = False
 			heading_timer = 120
+			heading.invisible = False
 			heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
 	elif (player.mode == 1 and player.ammo == 0):
 		sound_effects["no ammo"].play()
 		player.paction_cooldown = 30
 		trauma += 0.5
 		screenshake_duration = 8
-def hud_draw(screen,level_flash,current_sequence,sequences,heading_timer,heading,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
+def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
 	level_flash.draw(screen)
 	if (current_sequence == sequences["LEVELGAME"]):
 		if (heading_timer > 0):
@@ -394,6 +394,8 @@ def game():
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
 		if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
 			heading.invisible = True
+		else:
+			heading.invisible = False
 		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 		refresh_particles(particles)
 		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
@@ -401,7 +403,7 @@ def game():
 		player.special_update(screen)
 		if (player.fired):
 			player.muzzle = 10
-		hud_draw(screen,level_flash,current_sequence,sequences,heading_timer,heading,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
+		hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
@@ -417,6 +419,7 @@ def game():
 		if (fadein):
 			fade2()
 			fadein = not fadein
+		print(heading_timer)
 		pg.display.update()
 		clock.tick(60)
 def fade():
