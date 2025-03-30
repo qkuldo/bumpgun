@@ -250,6 +250,28 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		player.paction_cooldown = 30
 		trauma += 0.5
 		screenshake_duration = 8
+def hud_draw(screen,level_flash,current_sequence,sequences,heading_timer,heading,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
+	level_flash.draw(screen)
+	if (current_sequence == sequences["LEVELGAME"]):
+		if (heading_timer > 0):
+			dropshadow(heading.image,heading.hitbox.topleft,extension=5,alpha=80)
+			heading.draw(screen)
+		if (not player.muzzle > 0):
+			ammo_sprite.draw(screen,[player.ammo])
+		else:
+			ammo_sprite.draw(screen,[11])
+		hp_rect.height = player.hp * 4
+		hp_rect.bottomleft = (64,190)
+		shadow_hp_sprite.draw(screen)
+		pg.draw.rect(screen,(255,126,71),hp_rect)
+		if (player.mode == 0):
+			gun_power_sprite.draw(screen,[0])
+		elif (player.mode == 1 and player.ammo > 0):
+			gun_power_sprite.draw(screen,[1])
+		elif (player.mode == 1 and player.ammo <= 0):
+			gun_power_sprite.draw(screen,[2])
+		if (pg.mouse.get_focused()):
+			screen.blit(mouse_img, mouse_rect)
 def game():
 	fade()
 	global trauma
@@ -377,29 +399,9 @@ def game():
 		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
 		refresh_enemies(screen,enemies,floor,particles,player)
 		player.special_update(screen)
-		level_flash.draw(screen)
 		if (player.fired):
 			player.muzzle = 10
-		if (current_sequence == sequences["LEVELGAME"]):
-			if (heading_timer > 0):
-				dropshadow(heading.image,heading.hitbox.topleft,extension=5,alpha=80)
-			heading.draw(screen)
-			if (not player.muzzle > 0):
-				ammo_sprite.draw(screen,[player.ammo])
-			else:
-				ammo_sprite.draw(screen,[11])
-			hp_rect.height = player.hp * 4
-			hp_rect.bottomleft = (64,190)
-			shadow_hp_sprite.draw(screen)
-			pg.draw.rect(screen,(255,126,71),hp_rect)
-			if (player.mode == 0):
-				gun_power_sprite.draw(screen,[0])
-			elif (player.mode == 1 and player.ammo > 0):
-				gun_power_sprite.draw(screen,[1])
-			elif (player.mode == 1 and player.ammo <= 0):
-				gun_power_sprite.draw(screen,[2])
-			if (pg.mouse.get_focused()):
-				screen.blit(mouse_img, mouse_rect)
+		hud_draw(screen,level_flash,current_sequence,sequences,heading_timer,heading,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
