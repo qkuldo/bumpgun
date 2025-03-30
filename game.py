@@ -172,6 +172,108 @@ def refresh_particles(particles):
 			is_die = particle.update(screen)
 			if (is_die):
 				particles.pop(location)
+def refresh_projectiles(screen,projectiles,enemies,floor,particles):
+	global trauma
+	for location,projectile in sorted(enumerate(projectiles),reverse=True):
+			is_die = projectile.update_life()
+			projectile.update(-goto_angle(projectile.speed,projectile.angle))
+			projectile.draw(screen,[1,0],spread=2)
+			for enemy in enemies:
+				if (enemy.hitbox.colliderect(projectile.hitbox) and enemy.dmg_frames <= 0):
+					enemy.mode = 2
+					enemy.vel = [0,0]
+					sound_effects["gun wall hit"].play()
+					for i in range(random.randint(3,5),random.randint(7,10)):
+						white_random = random.randint(200,225)
+						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+					enemy.hp -= 1
+					projectiles.pop(location)
+					trauma += 3
+					break
+			if (is_die or not floor.hitbox.contains(projectile.hitbox)):
+				if (projectiles != []):
+					projectiles.pop(location)
+					sound_effects["gun wall hit"].play()
+					for i in range(random.randint(3,5),random.randint(7,10)):
+						white_random = random.randint(200,225)
+						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+def refresh_enemies(screen,enemies,floor,particles,player):
+	global trauma
+	for location,enemy in sorted(enumerate(enemies),reverse=True):
+			if (not floor.hitbox.contains(enemy.hitbox)):
+				if (enemy.pos[0] > floor.hitbox.center[0]):
+					enemy.pos[0] -= 2
+				if (enemy.pos[0] < floor.hitbox.center[0]):
+					enemy.pos[0] += 2
+				if (enemy.pos[1] > floor.hitbox.center[1]):
+					enemy.pos[1] -= 2
+				if (enemy.pos[1] < floor.hitbox.center[1]):
+					enemy.pos[1] += 2
+				if (enemy.dmg_frames > 0):	
+					enemy.pocket_mode = 1
+				else:
+					enemy.mode = 1
+				enemy.vel = [0,0]
+				if (not enemy.on_wall):
+					sound_effects["wall hit"].play()
+					enemy.on_wall = True
+			enemy.special_update(screen,target_pos=player.pos)
+			if (enemy.hp <= 0):
+				enemies.pop(location)
+				for i in range(random.randint(3,5),random.randint(7,10)):
+					white_random = random.randint(200,225)
+					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
+def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
+	global trauma
+	heading_return = 0
+	if (player.mode == 0):
+		player.start_jump()
+		sound_effects["jump"].play()
+		player.paction_cooldown = 20
+		for i in range(random.randint(3,5),random.randint(7,10)):
+			white_random = random.randint(200,225)
+			particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+	elif (player.mode == 1 and player.ammo > 0):
+		player.fire()
+		sound_effects["gunfire"].play()
+		trauma += 5
+		screenshake_duration = 8
+		player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
+		for i in range(random.randint(3,5),random.randint(7,10)):
+			white_random = random.randint(200,225)
+			particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
+		if (player.ammo <= 0):
+			heading_return = 120
+			heading.invisible = False
+			heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
+	elif (player.mode == 1 and player.ammo == 0):
+		sound_effects["no ammo"].play()
+		player.paction_cooldown = 30
+		trauma += 0.5
+		screenshake_duration = 8
+	return heading_return
+def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
+	level_flash.draw(screen)
+	if (current_sequence == sequences["LEVELGAME"]):
+		if (heading_timer > 0):
+			dropshadow(heading.image,heading.hitbox.topleft,extension=5,alpha=80)
+			heading.draw(screen)
+		if (not player.muzzle > 0):
+			ammo_sprite.draw(screen,[player.ammo])
+		else:
+			ammo_sprite.draw(screen,[11])
+		hp_rect.height = player.hp * 4
+		hp_rect.bottomleft = (64,190)
+		shadow_hp_sprite.draw(screen)
+		pg.draw.rect(screen,(255,126,71),hp_rect)
+		if (player.mode == 0):
+			gun_power_sprite.draw(screen,[0])
+		elif (player.mode == 1 and player.ammo > 0):
+			gun_power_sprite.draw(screen,[1])
+		elif (player.mode == 1 and player.ammo <= 0):
+			gun_power_sprite.draw(screen,[2])
+		if (pg.mouse.get_focused()):
+			screen.blit(mouse_img, mouse_rect)
 def game():
 	fade()
 	global trauma
@@ -184,7 +286,7 @@ def game():
 	screenshake_duration = 0
 	ammo_sprite = mods.Sprite(ammo_bar,[80,240],0,(33,50))
 	frames = 0
-	jump_frames = 0
+	player.paction_cooldown = 0
 	player_projectiles = [] 
 	gun_power_sprite = mods.Sprite(game_icons,[78,340],size=(32,32))
 	heading_font = pg.font.Font("fonts/Quaptype.ttf", 30)
@@ -236,38 +338,9 @@ def game():
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
 		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
-			if (player.mode == 0):
-				player.start_jump()
-				sound_effects["jump"].play()
-				jump_frames = 20
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
-			elif (player.mode == 1 and player.ammo > 0):
-				player.fire()
-				sound_effects["gunfire"].play()
-				trauma += 5
-				screenshake_duration = 8
-				player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
-				if (player.ammo <= 0):
-					heading.invisible = False
-					heading_timer = 120
-					heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
-			elif (current_sequence == sequences["LEVELGAME"] and player.mode == 1 and player.ammo == 0):
-				sound_effects["no ammo"].play()
-				player.paction_cooldown = 30
-				trauma = 0.5
-				screenshake_duration = 8
+			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
-			if (player.mode == 0):
-				player.mode = 1
-			elif (player.mode == 1):
-				player.mode = 0
-			player.modechange_cooldown = 15
-			player.paction_cooldown = 0
+			player.change_mode()
 		#TEST CODE
 		#if (keys[pg.K_v]):
 		#	enemies.append(mods.Enemy(enemy_spritesheets[0],[200,300],1,(50,50)))
@@ -293,7 +366,7 @@ def game():
 			turn_cooldown = 3
 			wall_hit_timer = 70
 			player.vel = [0,0]
-			jump_frames = 0
+			player.paction_cooldown = 0
 			if (player.pos[0] > floor.hitbox.center[0]):
 				player.pos[0] -= 2
 			if (player.pos[0] < floor.hitbox.center[0]):
@@ -303,7 +376,6 @@ def game():
 			if (player.pos[1] < floor.hitbox.center[1]):
 				player.pos[1] += 2
 		floor.update()
-		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 		if (player.jumping):
 			trauma += 0.5
 		if (current_sequence == sequences["LEVELINTRO"] and floor.angle != 360):
@@ -316,84 +388,19 @@ def game():
 			level_flash.invisible = True
 			play("factory",0)
 			current_sequence = sequences["LEVELGAME"]
-		player.special_update(screen)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
-		refresh_particles(particles)
-		for location,projectile in sorted(enumerate(player_projectiles),reverse=True):
-			is_die = projectile.update_life()
-			projectile.update(-goto_angle(projectile.speed,projectile.angle))
-			projectile.draw(screen,[1,0],spread=2)
-			for enemy in enemies:
-				if (enemy.hitbox.colliderect(projectile.hitbox) and enemy.dmg_frames <= 0):
-					enemy.mode = 2
-					enemy.vel = [0,0]
-					sound_effects["gun wall hit"].play()
-					for i in range(random.randint(3,5),random.randint(7,10)):
-						white_random = random.randint(200,225)
-						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
-					enemy.hp -= 1
-					player_projectiles.pop(location)
-					trauma += 3
-					break
-			if (is_die or not floor.hitbox.contains(projectile.hitbox)):
-				if (player_projectiles != []):
-					player_projectiles.pop(location)
-					sound_effects["gun wall hit"].play()
-					for i in range(random.randint(3,5),random.randint(7,10)):
-						white_random = random.randint(200,225)
-						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
-		for location,enemy in sorted(enumerate(enemies),reverse=True):
-			if (not floor.hitbox.contains(enemy.hitbox)):
-				if (enemy.pos[0] > floor.hitbox.center[0]):
-					enemy.pos[0] -= 2
-				if (enemy.pos[0] < floor.hitbox.center[0]):
-					enemy.pos[0] += 2
-				if (enemy.pos[1] > floor.hitbox.center[1]):
-					enemy.pos[1] -= 2
-				if (enemy.pos[1] < floor.hitbox.center[1]):
-					enemy.pos[1] += 2
-				if (enemy.dmg_frames > 0):	
-					enemy.pocket_mode = 1
-				else:
-					enemy.mode = 1
-				enemy.vel = [0,0]
-				if (not enemy.on_wall):
-					sound_effects["wall hit"].play()
-					enemy.on_wall = True
-			enemy.special_update(screen,target_pos=player.pos)
-			if (enemy.hp <= 0):
-				enemies.pop(location)
-				for i in range(random.randint(3,5),random.randint(7,10)):
-					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 		if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
 			heading.invisible = True
-		if (screenshake_duration > 0):
-			screenshake()
-			screenshake_duration -= 1
-		level_flash.draw(screen)
+		else:
+			heading.invisible = False
+		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+		refresh_particles(particles)
+		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
+		refresh_enemies(screen,enemies,floor,particles,player)
+		player.special_update(screen)
 		if (player.fired):
 			player.muzzle = 10
-		if (current_sequence == sequences["LEVELGAME"]):
-			if (heading_timer > 0):
-				dropshadow(heading.image,heading.hitbox.topleft,extension=5,alpha=80)
-			heading.draw(screen)
-			if (not player.muzzle > 0):
-				ammo_sprite.draw(screen,[player.ammo])
-			else:
-				ammo_sprite.draw(screen,[11])
-			hp_rect.height = player.hp * 4
-			hp_rect.bottomleft = (64,190)
-			shadow_hp_sprite.draw(screen)
-			pg.draw.rect(screen,(255,126,71),hp_rect)
-			if (player.mode == 0):
-				gun_power_sprite.draw(screen,[0])
-			elif (player.mode == 1 and player.ammo > 0):
-				gun_power_sprite.draw(screen,[1])
-			elif (player.mode == 1 and player.ammo <= 0):
-				gun_power_sprite.draw(screen,[2])
-			if (pg.mouse.get_focused()):
-				screen.blit(mouse_img, mouse_rect)
+		hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
@@ -403,6 +410,9 @@ def game():
 			if (frames > 60):
 				frames = 0
 		clicked = False
+		if (screenshake_duration > 0):
+			screenshake()
+			screenshake_duration -= 1
 		if (fadein):
 			fade2()
 			fadein = not fadein
