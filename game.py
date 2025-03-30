@@ -225,6 +225,7 @@ def refresh_enemies(screen,enemies,floor,particles,player):
 					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
 	global trauma
+	heading_return = 0
 	if (player.mode == 0):
 		player.start_jump()
 		sound_effects["jump"].play()
@@ -242,7 +243,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 			white_random = random.randint(200,225)
 			particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
 		if (player.ammo <= 0):
-			heading_timer = 120
+			heading_return = 120
 			heading.invisible = False
 			heading.image = heading_font.render(font_data["headings"]["no ammo"],True,(210,210,210))
 	elif (player.mode == 1 and player.ammo == 0):
@@ -250,6 +251,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		player.paction_cooldown = 30
 		trauma += 0.5
 		screenshake_duration = 8
+	return heading_return
 def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
 	level_flash.draw(screen)
 	if (current_sequence == sequences["LEVELGAME"]):
@@ -336,7 +338,7 @@ def game():
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
 		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
-			player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
+			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
 			if (player.mode == 0):
 				player.mode = 1
@@ -419,7 +421,6 @@ def game():
 		if (fadein):
 			fade2()
 			fadein = not fadein
-		print(heading_timer)
 		pg.display.update()
 		clock.tick(60)
 def fade():
