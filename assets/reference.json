@@ -5,7 +5,8 @@
 			"wall hit":"assets/sfx/wallhit.wav",
 			"gunfire":"assets/sfx/gunfire.wav",
 			"no ammo":"assets/sfx/noammo.wav",
-			"gun wall hit":"assets/sfx/gunwallhit.wav"
+			"gun wall hit":"assets/sfx/gunwallhit.wav",
+			"enemy death":"assets/sfx/enemydeath.wav"
 		},
 		"music":{
 			"factory":[

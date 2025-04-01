@@ -175,6 +175,7 @@ def refresh_particles(particles):
 def refresh_projectiles(screen,projectiles,enemies,floor,particles):
 	global trauma
 	for location,projectile in sorted(enumerate(projectiles),reverse=True):
+			hit_enemy = False
 			is_die = projectile.update_life()
 			projectile.update(-goto_angle(projectile.speed,projectile.angle))
 			projectile.draw(screen,[1,0],spread=2)
@@ -182,15 +183,15 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles):
 				if (enemy.hitbox.colliderect(projectile.hitbox) and enemy.dmg_frames <= 0):
 					enemy.mode = 2
 					enemy.vel = [0,0]
-					sound_effects["gun wall hit"].play()
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
 						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 					enemy.hp -= 1
+					sound_effects["gun wall hit"].play()
 					projectiles.pop(location)
 					trauma += 3
 					break
-			if (is_die or not floor.hitbox.contains(projectile.hitbox)):
+			if ((not hit_enemy) and is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (projectiles != []):
 					projectiles.pop(location)
 					sound_effects["gun wall hit"].play()
@@ -220,6 +221,7 @@ def refresh_enemies(screen,enemies,floor,particles,player):
 			enemy.special_update(screen,target_pos=player.pos)
 			if (enemy.hp <= 0):
 				enemies.pop(location)
+				sound_effects["enemy death"].play()
 				for i in range(random.randint(3,5),random.randint(7,10)):
 					white_random = random.randint(200,225)
 					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
