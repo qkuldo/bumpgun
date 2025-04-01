@@ -148,6 +148,13 @@ class Player(Sprite):
 		self.ammo -= 1
 		self.paction_cooldown = 30
 		self.fired = True
+	def change_mode(self):
+		if (self.mode == 0):
+			self.mode = 1
+		elif (self.mode == 1):
+			self.mode = 0
+		self.modechange_cooldown = 15
+		self.paction_cooldown = 0
 class Enemy(Player):
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5):
 		super().__init__(image,pos,render_type,size,angle,speed,life)
