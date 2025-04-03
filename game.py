@@ -294,6 +294,8 @@ def game_intro(floor,player,level_flash,sequences,current_sequence):
 def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration):
 	if (not floor.hitbox.contains(player.hitbox)):
 		player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,particles)
+	else:
+		on_wall = False
 	floor.update()
 	if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
 		heading.invisible = True
@@ -315,8 +317,8 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 			white_random = random.randint(200,225)
 			particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 		screenshake_duration = 8
+		player.on_wall = True
 	player.jumping = False
-	player.on_wall = True
 	trauma += 1
 	player.paction_cooldown = 10
 	turn_cooldown = 3
