@@ -185,7 +185,8 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles):
 					enemy.vel = [0,0]
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
-						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+						if (len(particles) < 50):
+							particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 					enemy.hp -= 1
 					sound_effects["gun wall hit"].play()
 					projectiles.pop(location)
@@ -197,7 +198,8 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles):
 					sound_effects["gun wall hit"].play()
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
-						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+						if (len(particles) < 50):
+							particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 def refresh_enemies(screen,enemies,floor,particles,player):
 	global trauma
 	for location,enemy in sorted(enumerate(enemies),reverse=True):
@@ -224,7 +226,8 @@ def refresh_enemies(screen,enemies,floor,particles,player):
 				sound_effects["enemy death"].play()
 				for i in range(random.randint(3,5),random.randint(7,10)):
 					white_random = random.randint(200,225)
-					particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
+					if (len(particles) < 50):
+						particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
 	global trauma
 	heading_return = 0
@@ -234,7 +237,8 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		player.paction_cooldown = 20
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
-			particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+			if (len(particles) < 50):
+				particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 	elif (player.mode == 1 and player.ammo > 0):
 		player.fire()
 		sound_effects["gunfire"].play()
@@ -243,7 +247,8 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
-			particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
+			if (len(particles) < 50):
+				particles.append(mods.Particle(copy.copy(player.pos),[-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],-goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(2,4),radius_decrease=0.03,shadow_color=(24,49,86)))
 		if (player.ammo <= 0):
 			heading_return = 120
 			heading.invisible = False
@@ -315,7 +320,8 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 		sound_effects["wall hit"].play()
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
-			particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+			if (len(particles) < 50):
+				particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 		screenshake_duration = 8
 		player.on_wall = True
 	player.jumping = False
