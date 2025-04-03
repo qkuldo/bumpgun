@@ -14,13 +14,19 @@ def goto_angle(velocity,angle):
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
 class Sprite:
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=1):
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=1,oscillate=False):
 		self.pos = list(pos)
 		self.speed = speed
 		self.image = image
+		self.oscillate = oscillate
 		self.blt_surf = pg.Surface(size)
 		self.hitbox = self.blt_surf.get_rect()
 		self.hitbox.center = self.pos
+		if (self.oscillate):
+			self.oscillate_direction = 0
+			self.oscillate_top = copy.copy(self.pos[1])-10
+			self.oscillate_bottom = copy.copy(self.pos[1])+10
+		#oscillate starting downwards
 		if (type(self.image) == Spritesheet and render_type==0):
 			self.read_img = 0
 			self.img_size = (self.image.width,self.image.height)
@@ -43,8 +49,19 @@ class Sprite:
 	def update(self,vel_change=[0,0]):
 		self.vel[0] += vel_change[0]
 		self.vel[1] += vel_change[1]
-		self.pos[0] += self.vel[0]
-		self.pos[1] += self.vel[1]
+		if (self.oscillate):
+			if (self.oscillate_direction == 0):
+				self.pos[1] += 1*self.vel[1]
+			else:
+				self.pos[1] -= self.vel[1]
+			if (self.pos[1] >= self.oscillate_bottom):
+				self.oscillate_direction = 1
+			elif (self.pos[1] <= self.oscillate_top):
+				self.oscillate_direction = 0
+			self.vel = [0,0]
+		else:
+			self.pos[0] += self.vel[0]
+			self.pos[1] += self.vel[1]
 		self.hitbox.center = self.pos
 	def new_stack(self,img,location=0):
 		if (location == 0):
@@ -94,8 +111,8 @@ class Sprite:
 			self.angle = math.degrees(math.atan2(-pdir[0],-pdir[1]))
 		return math.atan2(-pdir[0],-pdir[1])
 class Projectile(Sprite):
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=50):
-		super().__init__(image,pos,render_type,size,angle,speed)
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=50,oscillate=False):
+		super().__init__(image,pos,render_type,size,angle,speed,oscillate)
 		self.life = life
 	def update_life(self):
 		self.life -= 1
@@ -104,8 +121,8 @@ class Projectile(Sprite):
 		else:
 			return True
 class Player(Sprite):
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=20):
-		super().__init__(image,pos,render_type,size,angle,speed)
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=20,oscillate=False):
+		super().__init__(image,pos,render_type,size,angle,speed,oscillate)
 		self.hp = life
 		self.ammo = 10
 		self.mode = 0
@@ -156,8 +173,8 @@ class Player(Sprite):
 		self.modechange_cooldown = 15
 		self.paction_cooldown = 0
 class Enemy(Player):
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5):
-		super().__init__(image,pos,render_type,size,angle,speed,life)
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate=False):
+		super().__init__(image,pos,render_type,size,angle,speed,life,oscillate)
 		self.states = {
 			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
 			"FACE TARGET":{"frames":[3,4,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},

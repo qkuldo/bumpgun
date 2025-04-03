@@ -80,7 +80,7 @@ def title():
 	title_font = pg.font.Font("fonts/Quaptype.ttf", 80)
 	button_font = pg.font.Font("fonts/Quaptype.ttf", 30)
 	title_img = title_font.render(font_data["headings"]["title"],True,(255,255,255)).convert_alpha()
-	title = mods.Sprite(title_img,(400,200),size=[title_img.get_width(),title_img.get_height()])
+	title = mods.Sprite(title_img,(400,200),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
 	start_button = mods.hud_e.Button(button_font.render(font_data["buttons"]["startgame"],True,(180,180,180)),(100,100),choose_map)
 	pg.mouse.set_visible(False)
 	while True:
@@ -100,6 +100,7 @@ def title():
 				#print("trejrhtjrjihji")
 				clicked = True
 		screen.fill((30,30,30))
+		title.update([0,title.speed])
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
 		title.draw(screen)
 		hover = start_button.detect_hover(mouse_rect,button_font.render(font_data["buttons"]["startgame"],True,(255,255,255)),clicked)
@@ -115,7 +116,7 @@ def choose_map():
 	title_font = pg.font.Font("fonts/Quaptype.ttf", 60)
 	button_font = pg.font.Font("fonts/Quaptype.ttf", 25)
 	title_img = title_font.render(font_data["headings"]["mapchoose"],True,(255,255,255)).convert_alpha()
-	title = mods.Sprite(title_img,(300,100),size=[title_img.get_width(),title_img.get_height()])
+	title = mods.Sprite(title_img,(300,100),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
 	factory_button = mods.hud_e.Button(map_icons[0].load_frame(0),(100,200),game)
 	while True:
 		clicked = False
@@ -140,6 +141,7 @@ def choose_map():
 			render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 		else:
 			floor.angle = 0
+		title.update([0,title.speed])
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
 		title.draw(screen)
 		dropshadow(factory_button.text,(factory_button.textrect.x,factory_button.textrect.y),extension=3,alpha=80)
