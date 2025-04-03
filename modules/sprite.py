@@ -14,7 +14,7 @@ def goto_angle(velocity,angle):
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
 class Sprite:
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=1,oscillate):
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=1,oscillate=False):
 		self.pos = list(pos)
 		self.speed = speed
 		self.image = image
@@ -22,9 +22,10 @@ class Sprite:
 		self.blt_surf = pg.Surface(size)
 		self.hitbox = self.blt_surf.get_rect()
 		self.hitbox.center = self.pos
-		self.oscillate_direction = 0
-		self.oscillate_top = copy.copy(self.pos[1])-self.image.get_height()
-		self.oscillate_bottom = copy.copy(self.pos[1])+self.image.get_height()
+		if (self.oscillate):
+			self.oscillate_direction = 0
+			self.oscillate_top = copy.copy(self.pos[1])-10
+			self.oscillate_bottom = copy.copy(self.pos[1])+10
 		#oscillate starting downwards
 		if (type(self.image) == Spritesheet and render_type==0):
 			self.read_img = 0
@@ -52,11 +53,12 @@ class Sprite:
 			if (self.oscillate_direction == 0):
 				self.pos[1] += 1*self.vel[1]
 			else:
-				self.pos[1] -= (-1)*self.vel[1]
+				self.pos[1] -= self.vel[1]
 			if (self.pos[1] >= self.oscillate_bottom):
 				self.oscillate_direction = 1
 			elif (self.pos[1] <= self.oscillate_top):
 				self.oscillate_direction = 0
+			self.vel = [0,0]
 		else:
 			self.pos[0] += self.vel[0]
 			self.pos[1] += self.vel[1]
@@ -171,7 +173,7 @@ class Player(Sprite):
 		self.modechange_cooldown = 15
 		self.paction_cooldown = 0
 class Enemy(Player):
-	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate):
+	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,life,oscillate)
 		self.states = {
 			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
