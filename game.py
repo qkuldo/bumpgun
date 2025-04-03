@@ -276,6 +276,34 @@ def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences
 			gun_power_sprite.draw(screen,[2])
 		if (pg.mouse.get_focused()):
 			screen.blit(mouse_img, mouse_rect)
+def game_intro(floor,player,level_flash,sequences,current_sequence):
+	if (current_sequence == sequences["LEVELINTRO"]):
+		if (floor.angle != 360):
+			floor.angle += 2
+			player.angle += 2
+			level_flash.invisible = False
+			return sequences["LEVELINTRO"]
+		elif (floor.angle >= 360):
+			floor.angle = 0
+			player.angle = 180
+			level_flash.invisible = True
+			play("factory",0)
+			return sequences["LEVELGAME"]
+	else:
+		return sequences["LEVELGAME"]
+def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect):
+	if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
+		heading.invisible = True
+	else:
+		heading.invisible = False
+	render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+	refresh_particles(particles)
+	refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
+	refresh_enemies(screen,enemies,floor,particles,player)
+	player.special_update(screen)
+	if (player.fired):
+		player.muzzle = 10
+	hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
 def game():
 	fade()
 	global trauma
@@ -380,29 +408,9 @@ def game():
 		floor.update()
 		if (player.jumping):
 			trauma += 0.5
-		if (current_sequence == sequences["LEVELINTRO"] and floor.angle != 360):
-			floor.angle += 2
-			player.angle += 2
-			level_flash.invisible = False
-		elif (current_sequence == sequences["LEVELINTRO"] and floor.angle >= 360):
-			floor.angle = 0
-			player.angle = 180
-			level_flash.invisible = True
-			play("factory",0)
-			current_sequence = sequences["LEVELGAME"]
+		current_sequence = game_intro(floor,player,level_flash,sequences,current_sequence)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
-		if (current_sequence == sequences["LEVELGAME"] and heading_timer <= 0):
-			heading.invisible = True
-		else:
-			heading.invisible = False
-		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
-		refresh_particles(particles)
-		refresh_projectiles(screen,player_projectiles,enemies,floor,particles)
-		refresh_enemies(screen,enemies,floor,particles,player)
-		player.special_update(screen)
-		if (player.fired):
-			player.muzzle = 10
-		hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
+		update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect)
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
