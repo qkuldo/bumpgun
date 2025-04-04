@@ -179,7 +179,7 @@ class Enemy(Player):
 			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
 			"FACE TARGET":{"frames":[3,4,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
 			"DAMAGE":{"frames":[3,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
-			"ATTACK":{"frames":[3,4,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
+			"ATTACK":{"frames":[3,5,4,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
 		}
 		self.mode = 1
 		self.completion_pause = 0
@@ -198,11 +198,18 @@ class Enemy(Player):
 						self.pocket_mode = modeOption["transition"]
 					elif (modeOption == self.states["CHASE"]):
 						self.on_wall = False
-						vel_change = [-goto_angle(self.speed,self.angle)[0],-goto_angle(self.speed,self.angle)[1]]
-						self.pocket_mode = modeOption["transition"]
+						if (not self.attack_steps <= 0):
+							vel_change = [-goto_angle(self.speed,self.angle)[0],-goto_angle(self.speed,self.angle)[1]]
+							self.pocket_mode = modeOption["transition"]
+						else:
+							self.mode = 3
 					elif (modeOption == self.states["DAMAGE"]):
 						vel_change = [0,0]
-						self.dmg_frames = 100
+						self.dmg_frames = 80
+						self.pocket_mode = modeOption["transition"]
+					elif (modeOption == self.states["ATTACK"]):
+						vel_change = [0,0]
+						self.face_target(target_pos)
 						self.pocket_mode = modeOption["transition"]
 					self.completion_pause = modeOption["pause"]
 					break

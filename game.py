@@ -246,6 +246,7 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 					sound_effects["wall hit"].play()
 					enemy.on_wall = True
 			enemy.special_update(screen,target_pos=player.pos)
+			print(enemy.mode)
 			if (enemy.hp <= 0):
 				enemies.pop(location)
 				sound_effects["enemy death"].play()
