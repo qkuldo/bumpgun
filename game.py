@@ -57,7 +57,7 @@ def startup():
 		sound_effects[sfx] = pg.mixer.Sound(sound_effects[sfx])
 	music = assets["sfx"]["music"]
 	for skin in assets["images"]["skins"].values():
-		skins.append(mods.Spritesheet(pg.transform.scale(pg.image.load(skin).convert_alpha(),(26*11,36)),26,36))
+		skins.append(mods.Spritesheet(pg.transform.scale(pg.image.load(skin).convert_alpha(),(26*12,36)),26,36))
 	enemy_spritesheets = []
 	for enemy_img in assets["images"]["enemies"].values():
 		enemy_spritesheets.append(mods.Spritesheet(pg.transform.scale(pg.image.load(enemy_img["img path"]),(enemy_img["img size"][0]*enemy_img["frames"],enemy_img["img size"][1])).convert_alpha(),enemy_img["img size"][0],enemy_img["img size"][1]))
@@ -219,6 +219,7 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 				sound_effects["gun wall hit"].play()
 				enemy_projectiles.pop(location)
 				trauma += 3
+				player.dmg_frames = 20
 			if ((not hit_player) and is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (enemy_projectiles != []):
 					enemy_projectiles.pop(location)
@@ -260,7 +261,7 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
 	global trauma
 	heading_return = 0
-	if (player.mode == 0):
+	if (player.mode == 0 and player.dmg_frames <= 0):
 		player.start_jump()
 		sound_effects["jump"].play()
 		player.paction_cooldown = 20
@@ -268,7 +269,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 			white_random = random.randint(200,225)
 			if (len(particles) < 50):
 				particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
-	elif (player.mode == 1 and player.ammo > 0):
+	elif (player.mode == 1 and player.ammo > 0 and player.dmg_frames <= 0):
 		player.fire()
 		sound_effects["gunfire"].play()
 		trauma += 5
