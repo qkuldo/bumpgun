@@ -178,11 +178,14 @@ class Enemy(Player):
 		self.states = {
 			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
 			"FACE TARGET":{"frames":[3,4,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
-			"DAMAGE":{"frames":[3,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30}
+			"DAMAGE":{"frames":[3,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
+			"ATTACK":{"frames":[3,4,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
 		}
 		self.mode = 1
 		self.completion_pause = 0
 		self.pocket_mode = None
+		self.attack_steps = 3
+		self.highest_step_num = 3
 	def special_update(self,screen,vel_change=[0,0],target_pos=(0,0)):
 		if (self.dmg_frames > 0):
 			self.dmg_frames -= 1
@@ -203,6 +206,8 @@ class Enemy(Player):
 						self.pocket_mode = modeOption["transition"]
 					self.completion_pause = modeOption["pause"]
 					break
+			if (self.attack_steps <= 0):
+				self.attack_steps = 3
 		else:
 			for modeOption in self.states.values():
 				if (self.mode == modeOption["mode"]):
@@ -210,5 +215,6 @@ class Enemy(Player):
 			self.completion_pause -= 1
 			if (self.completion_pause <= 0 and self.pocket_mode != None):
 				self.mode = copy.copy(self.pocket_mode)
+				self.attack_steps -= 1
 				self.pocket_mode = None
 		self.update(vel_change)
