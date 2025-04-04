@@ -136,24 +136,28 @@ class Player(Sprite):
 			"jumping":[5,10,10,1,9,2,4],
 			"m0":[5,0,3,2],
 			"m1 wammo":[7,0,6,2],
-			"m1 nammo":[7,0,8,2]
+			"m1 nammo":[7,0,8,2],
+			"damage":[5,11]
 		}
 		self.dmg_frames = 0
 		self.accuracy = 5
 		self.bullet_speed = 0.75
 	def special_update(self,screen,vel_change=[0,0]):
-		if (self.jumping):
-			vel_change = [vel_change[0]-goto_angle(self.speed,self.angle)[0],vel_change[1]-goto_angle(self.speed,self.angle)[1]] 
-		self.update(vel_change)
-		if (self.jumping):
-			self.draw(screen,self.states["jumping"],special_flag=1,special_flag_params=[80,4])
+		if (dmg_frames <= 0):
+			if (self.jumping):
+				vel_change = [vel_change[0]-goto_angle(self.speed,self.angle)[0],vel_change[1]-goto_angle(self.speed,self.angle)[1]] 
+				self.draw(screen,self.states["jumping"],special_flag=1,special_flag_params=[80,4])
+			else:
+				if (self.mode == 0):
+					self.draw(screen,self.states["m0"])
+				elif (self.mode == 1 and self.ammo > 0):
+					self.draw(screen,self.states["m1 wammo"])
+				elif (self.mode == 1 and self.ammo <= 0):
+					self.draw(screen,self.states["m1 nammo"])
 		else:
-			if (self.mode == 0):
-				self.draw(screen,self.states["m0"])
-			elif (self.mode == 1 and self.ammo > 0):
-				self.draw(screen,self.states["m1 wammo"])
-			elif (self.mode == 1 and self.ammo <= 0):
-				self.draw(screen,self.states["m1 nammo"])
+			vel_change = [0,0]
+			self.draw(screen,self.states["damage"])
+		self.update(vel_change)
 		if (self.paction_cooldown > 0):
 			self.paction_cooldown -= 1
 		if (self.modechange_cooldown > 0):

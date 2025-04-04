@@ -57,7 +57,7 @@ def startup():
 		sound_effects[sfx] = pg.mixer.Sound(sound_effects[sfx])
 	music = assets["sfx"]["music"]
 	for skin in assets["images"]["skins"].values():
-		skins.append(mods.Spritesheet(pg.transform.scale(pg.image.load(skin).convert_alpha(),(26*11,36)),26,36))
+		skins.append(mods.Spritesheet(pg.transform.scale(pg.image.load(skin).convert_alpha(),(26*12,36)),26,36))
 	enemy_spritesheets = []
 	for enemy_img in assets["images"]["enemies"].values():
 		enemy_spritesheets.append(mods.Spritesheet(pg.transform.scale(pg.image.load(enemy_img["img path"]),(enemy_img["img size"][0]*enemy_img["frames"],enemy_img["img size"][1])).convert_alpha(),enemy_img["img size"][0],enemy_img["img size"][1]))
