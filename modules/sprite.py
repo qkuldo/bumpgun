@@ -143,7 +143,7 @@ class Player(Sprite):
 		self.accuracy = 5
 		self.bullet_speed = 0.75
 	def special_update(self,screen,vel_change=[0,0]):
-		if (dmg_frames <= 0):
+		if (self.dmg_frames <= 0):
 			if (self.jumping):
 				vel_change = [vel_change[0]-goto_angle(self.speed,self.angle)[0],vel_change[1]-goto_angle(self.speed,self.angle)[1]] 
 				self.draw(screen,self.states["jumping"],special_flag=1,special_flag_params=[80,4])
@@ -155,6 +155,7 @@ class Player(Sprite):
 				elif (self.mode == 1 and self.ammo <= 0):
 					self.draw(screen,self.states["m1 nammo"])
 		else:
+			self.dmg_frames -= 1
 			vel_change = [0,0]
 			self.draw(screen,self.states["damage"])
 		self.update(vel_change)
