@@ -174,7 +174,7 @@ def refresh_particles(particles):
 			is_die = particle.update(screen)
 			if (is_die):
 				particles.pop(location)
-def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles):
+def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player):
 	global trauma
 	for location,projectile in sorted(enumerate(projectiles),reverse=True):
 			hit_enemy = False
@@ -197,6 +197,29 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 			if ((not hit_enemy) and is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (projectiles != []):
 					projectiles.pop(location)
+					sound_effects["gun wall hit"].play()
+					for i in range(random.randint(3,5),random.randint(7,10)):
+						white_random = random.randint(200,225)
+						if (len(particles) < 50):
+							particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+	for location,projectile in sorted(enumerate(enemy_projectiles),reverse=True):
+			hit_player = False
+			is_die = projectile.update_life()
+			projectile.update(-goto_angle(projectile.speed,projectile.angle))
+			projectile.draw(screen,[1,0],spread=2)
+			if (player.hitbox.colliderect(projectile.hitbox) and player.dmg_frames <= 0):
+				player.vel = [0,0]
+				for i in range(random.randint(3,5),random.randint(7,10)):
+					white_random = random.randint(200,225)
+					if (len(particles) < 50):
+						particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
+				player.hp -= 1
+				sound_effects["gun wall hit"].play()
+				projectiles.pop(location)
+				trauma += 3
+			if ((not hit_player) and is_die or not floor.hitbox.contains(projectile.hitbox)):
+				if (enemy_projectiles != []):
+					enemy_projectiles.pop(location)
 					sound_effects["gun wall hit"].play()
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
@@ -310,7 +333,7 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 		heading.invisible = False
 	render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 	refresh_particles(particles)
-	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles)
+	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player)
 	refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles)
 	player.special_update(screen)
 	if (player.fired):
