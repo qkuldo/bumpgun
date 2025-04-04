@@ -139,6 +139,8 @@ class Player(Sprite):
 			"m1 nammo":[7,0,8,2]
 		}
 		self.dmg_frames = 0
+		self.accuracy = 5
+		self.bullet_speed = 0.75
 	def special_update(self,screen,vel_change=[0,0]):
 		if (self.jumping):
 			vel_change = [vel_change[0]-goto_angle(self.speed,self.angle)[0],vel_change[1]-goto_angle(self.speed,self.angle)[1]] 
@@ -186,6 +188,8 @@ class Enemy(Player):
 		self.pocket_mode = None
 		self.attack_steps = 3
 		self.highest_step_num = 3
+		self.accuracy = 10
+		self.bullet_speed = 0.5
 	def special_update(self,screen,vel_change=[0,0],target_pos=(0,0)):
 		if (self.dmg_frames > 0):
 			self.dmg_frames -= 1
