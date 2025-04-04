@@ -157,6 +157,7 @@ class Player(Sprite):
 		else:
 			self.dmg_frames -= 1
 			vel_change = [0,0]
+			jumping = False
 			self.draw(screen,self.states["damage"])
 		self.update(vel_change)
 		if (self.paction_cooldown > 0):
