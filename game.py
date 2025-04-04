@@ -249,7 +249,7 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 					enemy.on_wall = True
 			fire = enemy.special_update(screen,target_pos=player.pos)
 			if (fire == 1):
-				enemy_projectiles.append(mods.Projectile(fireball_bullet,enemy.pos,size=(40,40),speed=0.75,render_type=1,angle=copy.copy(enemy.angle)+random.randint(-5,5)))
+				enemy_projectiles.append(mods.Projectile(fireball_bullet,enemy.pos,size=(40,40),speed=enemy.bullet_speed,render_type=1,angle=copy.copy(enemy.angle)+random.randint(-enemy.accuracy,enemy.accuracy)))
 			if (enemy.hp <= 0):
 				enemies.pop(location)
 				sound_effects["enemy death"].play()
@@ -273,7 +273,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		sound_effects["gunfire"].play()
 		trauma += 5
 		screenshake_duration = 8
-		player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=0.75,render_type=1,angle=copy.copy(player.angle)+random.randint(-5,5)))
+		player_projectiles.append(mods.Projectile(player_bullet,[player.pos[0],player.pos[1]],size=(40,40),speed=player.bullet_speed,render_type=1,angle=copy.copy(player.angle)+random.randint(-player.accuracy,player.accuracy)))
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
 			if (len(particles) < 50):
