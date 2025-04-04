@@ -249,7 +249,7 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 					enemy.on_wall = True
 			fire = enemy.special_update(screen,target_pos=player.pos)
 			if (fire == 1):
-				enemy_projectiles.append(mods.Projectile(fireball_bullet,enemy.pos,size=(40,40),speed=0.75,render_type=1,angle=copy.copy(enemy.angle)+random.randint(-5,5)))
+				enemy_projectiles.append(mods.Projectile(fireball_bullet,enemy.pos,size=(40,40),speed=0.5,render_type=1,angle=copy.copy(enemy.angle)+random.randint(-10,10)))
 			if (enemy.hp <= 0):
 				enemies.pop(location)
 				sound_effects["enemy death"].play()
