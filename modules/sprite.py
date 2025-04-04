@@ -189,6 +189,7 @@ class Enemy(Player):
 	def special_update(self,screen,vel_change=[0,0],target_pos=(0,0)):
 		if (self.dmg_frames > 0):
 			self.dmg_frames -= 1
+		return_value = None
 		if (self.completion_pause <= 0):
 			for modeOption in self.states.values():
 				if (self.mode == modeOption["mode"]):
@@ -211,10 +212,11 @@ class Enemy(Player):
 						vel_change = [0,0]
 						self.face_target(target_pos)
 						self.pocket_mode = modeOption["transition"]
+						return_value = 1
 					self.completion_pause = modeOption["pause"]
 					break
 			if (self.attack_steps <= 0):
-				self.attack_steps = 3
+				self.attack_steps = self.highest_step_num
 		else:
 			for modeOption in self.states.values():
 				if (self.mode == modeOption["mode"]):
@@ -225,3 +227,4 @@ class Enemy(Player):
 				self.attack_steps -= 1
 				self.pocket_mode = None
 		self.update(vel_change)
+		return return_value

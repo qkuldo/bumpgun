@@ -28,7 +28,8 @@
 			"frogiea":{"img path":"assets/images/enemies/Frogeia/frogeia.png","img size":[42,36],"frames":9}
 		},
 		"projectiles": {
-			"player bullet":"assets/images/projectiles/player_bullet.png"
+			"player bullet":"assets/images/projectiles/player_bullet.png",
+			"fireball":"assets/images/projectiles/fireball.png"
 		},
 		"skins": {
 			"default":"assets/images/skins/default/player_skin1.png"
