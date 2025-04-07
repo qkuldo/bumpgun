@@ -5,9 +5,11 @@
  	"no ammo":"NO AMMO",
  	"placeholder":"BOPPIN",
  	"start level":"LEVEL ",
- 	"start":" START"
+ 	"start":" START",
+ 	"gameover":"BOT DESTROYED"
  },
  "buttons":{
- 	"startgame":"{Start Game}"
+ 	"startgame":"{Start Game}",
+ 	"to title":"{Build New Bot}"
  }
 }

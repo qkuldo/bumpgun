@@ -114,12 +114,14 @@ def title():
 			screen.blit(mousehover_img, mouse_rect)
 		pg.display.update()
 		clock.tick(60)
-def choose_map():
-	title_font = pg.font.Font("fonts/Quaptype.ttf", 60)
-	button_font = pg.font.Font("fonts/Quaptype.ttf", 25)
-	title_img = title_font.render(font_data["headings"]["mapchoose"],True,(255,255,255)).convert_alpha()
-	title = mods.Sprite(title_img,(300,100),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
-	factory_button = mods.hud_e.Button(map_icons[0].load_frame(0),(100,200),game)
+def gameover():
+	global fullscreen
+	title_font = pg.font.Font("fonts/Quaptype.ttf", 80)
+	button_font = pg.font.Font("fonts/Quaptype.ttf", 30)
+	title_img = title_font.render(font_data["headings"]["gameover"],True,(255,255,255)).convert_alpha()
+	title = mods.Sprite(title_img,(300,200),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
+	back_to_title_button = mods.hud_e.Button(button_font.render(font_data["buttons"]["to title"],True,(180,180,180)),(300,300),title)
+	pg.mouse.set_visible(False)
 	while True:
 		clicked = False
 		mouse_rect.center = pg.mouse.get_pos()
@@ -137,10 +139,50 @@ def choose_map():
 				#print("trejrhtjrjihji")
 				clicked = True
 		screen.fill((30,30,30))
-		render_Ffloor = factory_button.detect_hover(mouse_rect,clicked=clicked,change_onhover=map_icons[0].load_frame(1))
-		if (render_Ffloor):
+		title.update([0,title.speed])
+		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
+		title.draw(screen)
+		hover = back_to_title_button.detect_hover(mouse_rect,button_font.render(font_data["buttons"]["to title"],True,(255,255,255)),clicked,immediate_call=False)
+		if (hover and clicked):
+			break
+		dropshadow(back_to_title_button.text,(back_to_title_button.textrect.x,back_to_title_button.textrect.y),extension=3,alpha=80)
+		back_to_title_button.draw(screen)
+		if (pg.mouse.get_focused() and not hover):
+			screen.blit(mouse_img, mouse_rect)
+		elif (pg.mouse.get_focused() and hover):
+			screen.blit(mousehover_img, mouse_rect)
+		pg.display.update()
+		clock.tick(60)
+def choose_map():
+	title_font = pg.font.Font("fonts/Quaptype.ttf", 60)
+	button_font = pg.font.Font("fonts/Quaptype.ttf", 25)
+	title_img = title_font.render(font_data["headings"]["mapchoose"],True,(255,255,255)).convert_alpha()
+	title = mods.Sprite(title_img,(300,100),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
+	factory_button = mods.hud_e.Button(map_icons[0].load_frame(0),(100,200),game)
+	do_game = False
+	while True:
+		clicked = False
+		mouse_rect.center = pg.mouse.get_pos()
+		for event in pg.event.get():
+			if (event.type == pg.QUIT):
+				pg.mixer.quit()
+				pg.quit()
+				sys.exit()
+			if (event.type == pg.KEYDOWN):
+				if (event.key == pg.K_ESCAPE):
+					pg.mixer.quit()
+					pg.quit()
+					sys.exit()
+			elif (event.type == pg.MOUSEBUTTONDOWN):
+				#print("trejrhtjrjihji")
+				clicked = True
+		screen.fill((30,30,30))
+		render_Ffloor = factory_button.detect_hover(mouse_rect,clicked=clicked,change_onhover=map_icons[0].load_frame(1),immediate_call=False)
+		if (render_Ffloor and render_Ffloor != 3):
 			floor.angle+=0.5
 			render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+		elif (render_Ffloor == 3):
+			do_game = True
 		else:
 			floor.angle = 0
 		title.update([0,title.speed])
@@ -152,8 +194,11 @@ def choose_map():
 			screen.blit(mouse_img, mouse_rect)
 		elif (pg.mouse.get_focused() and render_Ffloor):
 			screen.blit(mousehover_img, mouse_rect)
+		if (do_game):
+			break
 		pg.display.update()
 		clock.tick(60)
+	game()
 def goto_angle(velocity,angle):
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
@@ -176,7 +221,7 @@ def refresh_particles(particles):
 			is_die = particle.update(screen)
 			if (is_die):
 				particles.pop(location)
-def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player):
+def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence):
 	global trauma
 	for location,projectile in sorted(enumerate(projectiles),reverse=True):
 			hit_enemy = False
@@ -338,7 +383,7 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 		heading.invisible = False
 	render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 	refresh_particles(particles)
-	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player)
+	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence)
 	refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles)
 	player.special_update(screen)
 	if (player.fired):
@@ -469,6 +514,12 @@ def game():
 		if (fadein):
 			fade2()
 			fadein = not fadein
+		if (player.hp <= 0):
+			current_sequence = sequences["PLAYERDIE"]
+		if (current_sequence == sequences["PLAYERDIE"]):
+			pg.mixer.music.stop()
+			gameover()
+			break
 		pg.display.update()
 		clock.tick(60)
 def fade():
