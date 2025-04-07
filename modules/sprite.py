@@ -233,8 +233,9 @@ class Enemy(Player):
 					self.draw(screen,modeOption["frames"],spread=modeOption["spread"])
 			self.completion_pause -= 1
 			if (self.completion_pause <= 0 and self.pocket_mode != None):
+				if (self.mode != self.states["DAMAGE"]["mode"]):
+					self.attack_steps -= 1
 				self.mode = copy.copy(self.pocket_mode)
-				self.attack_steps -= 1
 				self.pocket_mode = None
 		self.update(vel_change)
 		return return_value
