@@ -73,6 +73,8 @@ def startup():
 	fireball_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["fireball"]),(15*2,25)).convert_alpha(),15,25)
 def mainloop():
 	title()
+	pg.quit()
+	sys.exit()
 def dropshadow(org_surf,org_pos,alpha=155,extension=10):
 	shadow = org_surf.copy()
 	shadow.set_alpha(alpha)
@@ -106,6 +108,8 @@ def title():
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
 		title.draw(screen)
 		hover = start_button.detect_hover(mouse_rect,button_font.render(font_data["buttons"]["startgame"],True,(255,255,255)),clicked)
+		if (hover and clicked):
+			return None
 		dropshadow(start_button.text,(start_button.textrect.x,start_button.textrect.y),extension=3,alpha=80)
 		start_button.draw(screen)
 		if (pg.mouse.get_focused() and not hover):
@@ -416,6 +420,7 @@ def game():
 	turn_cooldown = 0
 	wall_hit_timer = 0
 	enemy_projectiles = []
+	player.hp = 10
 	while True:
 		player.fired = False
 		screen.fill((30,30,30))
@@ -454,6 +459,8 @@ def game():
 		current_sequence = game_intro(floor,player,level_flash,sequences,current_sequence)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
 		update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration,enemy_projectiles)
+		if (player.hp <= 0):
+			break
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
