@@ -422,7 +422,6 @@ def game():
 	turn_cooldown = 0
 	wall_hit_timer = 0
 	enemy_projectiles = []
-	player.hp = 2
 	while True:
 		player.fired = False
 		screen.fill((30,30,30))
