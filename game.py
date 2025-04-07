@@ -73,8 +73,6 @@ def startup():
 	fireball_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["fireball"]),(15*2,25)).convert_alpha(),15,25)
 def mainloop():
 	title()
-	pg.quit()
-	sys.exit()
 def dropshadow(org_surf,org_pos,alpha=155,extension=10):
 	shadow = org_surf.copy()
 	shadow.set_alpha(alpha)
@@ -108,8 +106,6 @@ def title():
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
 		title.draw(screen)
 		hover = start_button.detect_hover(mouse_rect,button_font.render(font_data["buttons"]["startgame"],True,(255,255,255)),clicked)
-		if (hover and clicked):
-			return None
 		dropshadow(start_button.text,(start_button.textrect.x,start_button.textrect.y),extension=3,alpha=80)
 		start_button.draw(screen)
 		if (pg.mouse.get_focused() and not hover):
@@ -124,6 +120,7 @@ def choose_map():
 	title_img = title_font.render(font_data["headings"]["mapchoose"],True,(255,255,255)).convert_alpha()
 	title = mods.Sprite(title_img,(300,100),size=[title_img.get_width(),title_img.get_height()],speed=0.8,oscillate=True)
 	factory_button = mods.hud_e.Button(map_icons[0].load_frame(0),(100,200),game)
+	do_game = False
 	while True:
 		clicked = False
 		mouse_rect.center = pg.mouse.get_pos()
@@ -141,10 +138,12 @@ def choose_map():
 				#print("trejrhtjrjihji")
 				clicked = True
 		screen.fill((30,30,30))
-		render_Ffloor = factory_button.detect_hover(mouse_rect,clicked=clicked,change_onhover=map_icons[0].load_frame(1))
-		if (render_Ffloor):
+		render_Ffloor = factory_button.detect_hover(mouse_rect,clicked=clicked,change_onhover=map_icons[0].load_frame(1),immediate_call=False)
+		if (render_Ffloor and render_Ffloor != 3):
 			floor.angle+=0.5
 			render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+		elif (render_Ffloor == 3):
+			do_game = True
 		else:
 			floor.angle = 0
 		title.update([0,title.speed])
@@ -156,8 +155,11 @@ def choose_map():
 			screen.blit(mouse_img, mouse_rect)
 		elif (pg.mouse.get_focused() and render_Ffloor):
 			screen.blit(mousehover_img, mouse_rect)
+		if (do_game):
+			break
 		pg.display.update()
 		clock.tick(60)
+	game()
 def goto_angle(velocity,angle):
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
@@ -180,7 +182,7 @@ def refresh_particles(particles):
 			is_die = particle.update(screen)
 			if (is_die):
 				particles.pop(location)
-def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player):
+def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence):
 	global trauma
 	for location,projectile in sorted(enumerate(projectiles),reverse=True):
 			hit_enemy = False
@@ -342,7 +344,7 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 		heading.invisible = False
 	render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 	refresh_particles(particles)
-	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player)
+	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence)
 	refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles)
 	player.special_update(screen)
 	if (player.fired):
@@ -420,7 +422,7 @@ def game():
 	turn_cooldown = 0
 	wall_hit_timer = 0
 	enemy_projectiles = []
-	player.hp = 10
+	player.hp = 2
 	while True:
 		player.fired = False
 		screen.fill((30,30,30))
@@ -459,8 +461,6 @@ def game():
 		current_sequence = game_intro(floor,player,level_flash,sequences,current_sequence)
 	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
 		update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration,enemy_projectiles)
-		if (player.hp <= 0):
-			break
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
 				trauma -= 0.1
@@ -476,6 +476,11 @@ def game():
 		if (fadein):
 			fade2()
 			fadein = not fadein
+		if (player.hp <= 0):
+			current_sequence = sequences["PLAYERDIE"]
+		if (current_sequence == sequences["PLAYERDIE"]):
+			pg.mixer.music.stop()
+			break
 		pg.display.update()
 		clock.tick(60)
 def fade():

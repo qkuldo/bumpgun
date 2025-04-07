@@ -18,13 +18,16 @@ class Button:
 	def draw(self,screen):
 		#run every loop
 		screen.blit(self.text,self.textrect)
-	def detect_hover(self,mouserect,change_onhover=None,clicked=False):
+	def detect_hover(self,mouserect,change_onhover=None,clicked=False,immediate_call=True):
 		#run every loop
 		if (self.textrect.colliderect(mouserect)):
 			if (change_onhover!=None):
 				self.text = change_onhover
 			if (clicked):
-				self.func()
+				if (immediate_call):
+					self.func()
+				else:
+					return 3
 			return True
 		else:
 			self.text = self.ogtext
