@@ -169,7 +169,6 @@ class Player(Sprite):
 	def start_jump(self):
 		self.jumping = True
 		self.on_wall = False
-		self.paction_cooldown = 10
 	def fire(self):
 		self.ammo -= 1
 		self.paction_cooldown = 30

@@ -402,14 +402,15 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 		turn_cooldown = 3
 		wall_hit_timer = 70
 		player.jumping = False
-		if (player.pos[0] > floor.hitbox.center[0]):
-			player.pos[0] -= 20
-		if (player.pos[0] < floor.hitbox.center[0]):
-			player.pos[0] += 20
-		if (player.pos[1] > floor.hitbox.center[1]):
-			player.pos[1] -= 20
-		if (player.pos[1] < floor.hitbox.center[1]):
-			player.pos[1] += 20
+		player.paction_cooldown = 20
+	if (player.pos[0] > floor.hitbox.center[0]):
+		player.pos[0] -= 2
+	if (player.pos[0] < floor.hitbox.center[0]):
+		player.pos[0] += 2
+	if (player.pos[1] > floor.hitbox.center[1]):
+		player.pos[1] -= 2
+	if (player.pos[1] < floor.hitbox.center[1]):
+		player.pos[1] += 2
 	player.vel = [0,0]
 def game():
 	fade()
