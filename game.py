@@ -306,10 +306,9 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
 	global trauma
 	heading_return = 0
-	if (player.mode == 0 and player.dmg_frames <= 0):
+	if (player.mode == 0 and player.dmg_frames <= 0 and not player.jumping):
 		player.start_jump()
 		sound_effects["jump"].play()
-		player.paction_cooldown = 20
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
 			if (len(particles) < 50):
@@ -399,13 +398,11 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 				particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 		screenshake_duration = 8
 		player.on_wall = True
-	player.jumping = False
-	trauma += 1
-	player.paction_cooldown = 10
-	turn_cooldown = 3
-	wall_hit_timer = 70
-	player.vel = [0,0]
-	player.paction_cooldown = 0
+		trauma += 1
+		turn_cooldown = 3
+		wall_hit_timer = 70
+		player.jumping = False
+		player.paction_cooldown = 20
 	if (player.pos[0] > floor.hitbox.center[0]):
 		player.pos[0] -= 2
 	if (player.pos[0] < floor.hitbox.center[0]):
@@ -414,6 +411,7 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 		player.pos[1] -= 2
 	if (player.pos[1] < floor.hitbox.center[1]):
 		player.pos[1] += 2
+	player.vel = [0,0]
 def game():
 	fade()
 	global trauma
@@ -480,7 +478,7 @@ def game():
 	#		test_sprite.face_target(mouse_rect.center)
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
-		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
+		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and (not player.jumping)):
 			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
 			player.change_mode()
