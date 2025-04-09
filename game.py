@@ -306,10 +306,9 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
 	global trauma
 	heading_return = 0
-	if (player.mode == 0 and player.dmg_frames <= 0):
+	if (player.mode == 0 and player.dmg_frames <= 0 and not player.jumping):
 		player.start_jump()
 		sound_effects["jump"].play()
-		player.paction_cooldown = 20
 		for i in range(random.randint(3,5),random.randint(7,10)):
 			white_random = random.randint(200,225)
 			if (len(particles) < 50):
@@ -480,7 +479,7 @@ def game():
 	#		test_sprite.face_target(mouse_rect.center)
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
-		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and not player.jumping):
+		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and (not player.jumping)):
 			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
 			player.change_mode()
