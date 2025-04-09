@@ -398,21 +398,19 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 				particles.append(mods.Particle(copy.copy(player.pos),[goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),player.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random,white_random,white_random),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 		screenshake_duration = 8
 		player.on_wall = True
-	player.jumping = False
-	trauma += 1
-	player.paction_cooldown = 10
-	turn_cooldown = 3
-	wall_hit_timer = 70
+		trauma += 1
+		turn_cooldown = 3
+		wall_hit_timer = 70
+		player.jumping = False
+		if (player.pos[0] > floor.hitbox.center[0]):
+			player.pos[0] -= 20
+		if (player.pos[0] < floor.hitbox.center[0]):
+			player.pos[0] += 20
+		if (player.pos[1] > floor.hitbox.center[1]):
+			player.pos[1] -= 20
+		if (player.pos[1] < floor.hitbox.center[1]):
+			player.pos[1] += 20
 	player.vel = [0,0]
-	player.paction_cooldown = 0
-	if (player.pos[0] > floor.hitbox.center[0]):
-		player.pos[0] -= 2
-	if (player.pos[0] < floor.hitbox.center[0]):
-		player.pos[0] += 2
-	if (player.pos[1] > floor.hitbox.center[1]):
-		player.pos[1] -= 2
-	if (player.pos[1] < floor.hitbox.center[1]):
-		player.pos[1] += 2
 def game():
 	fade()
 	global trauma
