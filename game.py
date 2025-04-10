@@ -231,7 +231,6 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 			for enemy in enemies:
 				if (enemy.hitbox.colliderect(projectile.hitbox) and enemy.dmg_frames <= 0):
 					enemy.mode = 2
-					enemy.vel = [0,0]
 					for i in range(random.randint(3,5),random.randint(7,10)):
 						white_random = random.randint(200,225)
 						if (len(particles) < 50):
@@ -240,6 +239,7 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 					sound_effects["gun wall hit"].play()
 					projectiles.pop(location)
 					trauma += 3
+					enemy.vel = [-goto_angle(enemy.vel[0],-projectile.angle)[0],-goto_angle(enemy.vel[1],projectile.angle)[1]]
 					break
 			if ((not hit_enemy) and is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (projectiles != []):
@@ -255,7 +255,8 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 			projectile.update(-goto_angle(projectile.speed,projectile.angle))
 			projectile.draw(screen,[1,0],spread=2)
 			if (player.hitbox.colliderect(projectile.hitbox) and player.dmg_frames <= 0):
-				player.vel = [0,0]
+				player.vel = [-goto_angle(player.vel[0],-projectile.angle)[0],-goto_angle(player.vel[1],projectile.angle)[1]]
+				jumping = True
 				for i in range(random.randint(3,5),random.randint(7,10)):
 					white_random = random.randint(200,225)
 					if (len(particles) < 50):
