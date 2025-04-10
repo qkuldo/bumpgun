@@ -137,7 +137,7 @@ class Player(Sprite):
 			"m0":[5,0,3,2],
 			"m1 wammo":[7,0,6,2],
 			"m1 nammo":[7,0,8,2],
-			"damage":[5,11]
+			"damage":[5,10,10,11]
 		}
 		self.dmg_frames = 0
 		self.accuracy = 5
@@ -186,7 +186,7 @@ class Enemy(Player):
 		self.states = {
 			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
 			"FACE TARGET":{"frames":[3,4,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
-			"DAMAGE":{"frames":[3,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
+			"DAMAGE":{"frames":[3,5,5,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
 			"ATTACK":{"frames":[3,5,4,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
 		}
 		self.mode = 1
