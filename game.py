@@ -101,6 +101,7 @@ def title():
 			elif (event.type == pg.MOUSEBUTTONDOWN):
 				#print("trejrhtjrjihji")
 				clicked = True
+				sound_effects["button click"].play()
 		screen.fill((30,30,30))
 		title.update([0,title.speed])
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
@@ -138,6 +139,7 @@ def gameover():
 			elif (event.type == pg.MOUSEBUTTONDOWN):
 				#print("trejrhtjrjihji")
 				clicked = True
+				sound_effects["button click"].play()
 		screen.fill((30,30,30))
 		title.update([0,title.speed])
 		dropshadow(title.image,(title.hitbox.x,title.hitbox.y),extension=5,alpha=80)
@@ -176,6 +178,7 @@ def choose_map():
 			elif (event.type == pg.MOUSEBUTTONDOWN):
 				#print("trejrhtjrjihji")
 				clicked = True
+				sound_effects["button click"].play()
 		screen.fill((30,30,30))
 		render_Ffloor = factory_button.detect_hover(mouse_rect,clicked=clicked,change_onhover=map_icons[0].load_frame(1),immediate_call=False)
 		if (render_Ffloor and render_Ffloor != 3):
@@ -472,6 +475,7 @@ def game():
 			elif (event.type == pg.MOUSEBUTTONDOWN):
 				#print("trejrhtjrjihji")
 				clicked = True
+				sound_effects["button click"].play()
 		keys = pg.key.get_pressed()
 		mouse_rect.center = pg.mouse.get_pos()
 		if (current_sequence == sequences["LEVELGAME"] and (not player.jumping)):
