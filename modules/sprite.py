@@ -142,6 +142,7 @@ class Player(Sprite):
 		self.dmg_frames = 0
 		self.accuracy = 5
 		self.bullet_speed = 0.75
+		self.knock_change = []
 	def special_update(self,screen,vel_change=[0,0]):
 		if (self.dmg_frames <= 0):
 			if (self.jumping):
@@ -156,7 +157,6 @@ class Player(Sprite):
 					self.draw(screen,self.states["m1 nammo"])
 		else:
 			self.dmg_frames -= 1
-			vel_change = [0,0]
 			self.jumping = False
 			self.draw(screen,self.states["damage"])
 		self.update(vel_change)
@@ -215,7 +215,7 @@ class Enemy(Player):
 						else:
 							self.mode = 3
 					elif (modeOption == self.states["DAMAGE"]):
-						vel_change = [0,0]
+						vel_change = copy.copy(self.knock_change)
 						self.dmg_frames = 80
 						self.pocket_mode = modeOption["transition"]
 					elif (modeOption == self.states["ATTACK"]):
