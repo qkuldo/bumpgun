@@ -12,7 +12,7 @@ Requires `Python 3` and the following libraries:
 	- `os`
 - _Not included with the default installation of `Python 3`_:
 	- `pygame`
-## Support
-If you have any problems or requests, please create an issue with the `documentation` tag and either the `bug` or `enhancements` tags in this repo and add it to the [**documentation project**](https://github.com/users/qkuldo/projects/1). Set the fields for `Assignees`, `Status`, and `Time Started`. If your issue is a feature proposal, move it to the `Feature Proposal` group, and if it is a bug, move it to the `Bug` group.
+## Contributing
+Guidelines for contributing can be found [here](CONTRIBUTING.md).
 ## License
 This project is under the [GNU General Public License](LICENSE.md)
