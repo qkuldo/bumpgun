@@ -1,0 +1,2 @@
+# These owners own everything in the repo. Whenever there is a PR, they will be automatically assigned
+*       @qkuldo
