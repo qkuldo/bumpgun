@@ -143,6 +143,9 @@ class Player(Sprite):
 		self.accuracy = 5
 		self.bullet_speed = 0.75
 		self.knock_change = []
+		self.idle_timer = 20
+		self.idle_state = 0
+		self.idle_spreads = [1,1.3,1.5]
 	def special_update(self,screen,vel_change=[0,0]):
 		if (self.dmg_frames <= 0):
 			if (self.jumping):
@@ -150,11 +153,11 @@ class Player(Sprite):
 				self.draw(screen,self.states["jumping"],special_flag=1,special_flag_params=[80,4])
 			else:
 				if (self.mode == 0):
-					self.draw(screen,self.states["m0"])
+					self.draw(screen,self.states["m0"],spread=self.idle_spreads[self.idle_state])
 				elif (self.mode == 1 and self.ammo > 0):
-					self.draw(screen,self.states["m1 wammo"])
+					self.draw(screen,self.states["m1 wammo"],spread=self.idle_spreads[self.idle_state])
 				elif (self.mode == 1 and self.ammo <= 0):
-					self.draw(screen,self.states["m1 nammo"])
+					self.draw(screen,self.states["m1 nammo"],spread=self.idle_spreads[self.idle_state])
 		else:
 			self.dmg_frames -= 1
 			self.jumping = False
@@ -166,6 +169,14 @@ class Player(Sprite):
 			self.modechange_cooldown -= 1
 		if (self.muzzle > 0):
 			self.muzzle -= 1
+		if (self.idle_timer > 0):
+			self.idle_timer -= 1
+		else:
+			self.idle_timer = 20
+			if (self.idle_state == 2):
+				self.idle_state = 0
+			else:
+				self.idle_state += 1
 	def start_jump(self):
 		self.jumping = True
 		self.on_wall = False
