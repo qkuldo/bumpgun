@@ -480,7 +480,7 @@ def game():
 				sound_effects["button click"].play()
 		keys = pg.key.get_pressed()
 		mouse_rect.center = pg.mouse.get_pos()
-		if (current_sequence == sequences["LEVELGAME"] and (not player.jumping)):
+		if (current_sequence == sequences["LEVELGAME"] and (not player.jumping) and (player.dmg_frames <= 0)):
 			player.face_target(mouse_rect.center)
 	#		test_sprite.face_target(mouse_rect.center)
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
