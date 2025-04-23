@@ -240,10 +240,10 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 							particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=3,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 					enemy.hp -= 1
 					sound_effects["gun wall hit"].play()
-					projectiles.pop(location)
 					trauma += 3
 					enemy.knock_change = [-goto_angle(enemy.speed,projectile.angle)[0],-goto_angle(enemy.speed,projectile.angle)[1]]
-					enemy.vel = [-goto_angle(enemy.vel[0]*1,projectile.angle)[0],-goto_angle(enemy.vel[1]*1,projectile.angle)[1]]
+					enemy.vel = [-goto_angle(enemy.speed*20,projectile.angle)[0],-goto_angle(enemy.speed*20,projectile.angle)[1]]
+					projectiles.pop(location)
 					break
 			if ((not hit_enemy) and is_die or not floor.hitbox.contains(projectile.hitbox)):
 				if (projectiles != []):
