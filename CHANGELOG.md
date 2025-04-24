@@ -20,3 +20,4 @@ This is the first update with a ton of new changes.
 * Made changes to Quaptype.ttf by @qkuldo in https://github.com/qkuldo/bumpgun/pull/21
 * Added new logic condition to prevent issue #22 by @qkuldo in https://github.com/qkuldo/bumpgun/pull/23
 * PR to merge repository-banner to main by @qkuldo in https://github.com/qkuldo/bumpgun/pull/24
+* PR to merge branch `edit-changelog` to main by @qkuldo in https://github.com/qkuldo/bumpgun/pull/25
