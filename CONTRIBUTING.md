@@ -9,12 +9,7 @@
 ## Pull Requests
 1. Creating a Pull Request
    - The short description of a Pull Request should be formatted in this way:
-     `PR to merge [branch] to main`(replace [branch] with the name of the branch you want to merge)
-   - The extended description has to be in this format:
-   ## New features:
-     - Insert list items for each new feature here
-   ## Resolved Issues
-     - Insert linking text to link branch to issue
+     "PR to merge `[branch]` to `[version]`"(replace `[branch]` with the name of the branch you want to merge and replace `[version]` with the version branch)
 2. Resolving a Pull Request
    - Pull requests can be merged by the following contributors:
       - qkuldo
