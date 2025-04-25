@@ -1,7 +1,6 @@
 # Changelog
 Maintained by qkuldo
-Does not use Semantic Versioning
-## v1.0.0
+## `v1.0.0-beta`
 This is the first update with a ton of new changes.
 * Merge function-optimization branch to main by @qkuldo in https://github.com/qkuldo/bumpgun/pull/1
 * Pull request to merge branch "less-lines-more-functions" with main branch by @qkuldo in https://github.com/qkuldo/bumpgun/pull/2
@@ -21,3 +20,6 @@ This is the first update with a ton of new changes.
 * Added new logic condition to prevent issue #22 by @qkuldo in https://github.com/qkuldo/bumpgun/pull/23
 * PR to merge repository-banner to main by @qkuldo in https://github.com/qkuldo/bumpgun/pull/24
 * PR to merge branch `edit-changelog` to main by @qkuldo in https://github.com/qkuldo/bumpgun/pull/25
+## `v1.1.0-beta`
+* Added new templates for issues and PRs in PRs #33 and #34
+* Edited `CONTRIBUTING.md` in PR #27.
