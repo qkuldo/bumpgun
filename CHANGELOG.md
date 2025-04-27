@@ -23,3 +23,6 @@ This is the first update with a ton of new changes.
 ## `v1.1.0-beta`
 * Added new templates for issues and PRs in PRs #33 and #34
 * Edited `CONTRIBUTING.md` in PR #27.
+## `v1.2.0-beta`
+* Updated [`README.md`](README.md) through adding the project banner on the top of the page and rewriting the Requirements section in PR #36
+* Created a new version of the original "FACTORY1" music in PR #37
