@@ -26,7 +26,7 @@
 			"mouse hover":"assets/images/hud/mouse_canclick.png"
 		},
 		"enemies":{
-			"frogiea":{"img path":"assets/images/enemies/Frogeia/frogeia.png","img size":[42,36],"frames":9}
+			"frogiea":{"img path":"assets/images/enemies/Frogeia/frogeia.png","img size":[42,36],"frames":12}
 		},
 		"projectiles": {
 			"player bullet":"assets/images/projectiles/player_bullet.png",
