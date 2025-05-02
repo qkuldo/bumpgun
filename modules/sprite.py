@@ -195,10 +195,10 @@ class Enemy(Player):
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,life,oscillate)
 		self.states = {
-			"CHASE":{"frames":[3,5,5,4,2,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
-			"FACE TARGET":{"frames":[3,4,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
-			"DAMAGE":{"frames":[3,5,5,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
-			"ATTACK":{"frames":[3,5,4,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
+			"CHASE":{"frames":[11,5,5,9,10,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
+			"FACE TARGET":{"frames":[4,3,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
+			"DAMAGE":{"frames":[4,5,5,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
+			"ATTACK":{"frames":[4,5,3,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
 		}
 		self.mode = 1
 		self.completion_pause = 0
