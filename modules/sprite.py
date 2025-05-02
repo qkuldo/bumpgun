@@ -227,7 +227,7 @@ class Enemy(Player):
 							self.mode = 3
 					elif (modeOption == self.states["DAMAGE"]):
 						vel_change = copy.copy(self.knock_change)
-						self.dmg_frames = 80
+						self.dmg_frames = 60
 						self.pocket_mode = modeOption["transition"]
 					elif (modeOption == self.states["ATTACK"]):
 						vel_change = [0,0]
