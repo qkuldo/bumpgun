@@ -26,3 +26,6 @@ This is the first update with a ton of new changes.
 ## `v1.2.0-beta`
 * Updated [`README.md`](README.md) through adding the project banner on the top of the page and rewriting the Requirements section in PR #36
 * Created a new version of the original "FACTORY1" music in PR #37
+## `v1.3.0-beta`
+* Redesigned Frogeia enemy and added new animations in PR #39
+* Edited `CHANGELOG.md` in PR #40
