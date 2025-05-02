@@ -21,7 +21,3 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
-    - uses: actions/upload-artifact@v4
-      with:
-        name: pylint-output
-        path: pylint-output.json
