@@ -195,7 +195,7 @@ class Enemy(Player):
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,life,oscillate)
 		self.states = {
-			"CHASE":{"frames":[11,5,5,9,10,0,1],"spread":1.5,"mode":0,"transition":0,"pause":0},
+			"CHASE":{"frames":[11,5,5,9,10,0,1,12],"spread":1.5,"mode":0,"transition":0,"pause":0},
 			"FACE TARGET":{"frames":[4,3,2,0,1],"spread":1.5,"mode":1,"transition":0,"pause":30},
 			"DAMAGE":{"frames":[4,5,5,8,7,6],"spread":1.5,"mode":2,"transition":1,"pause":30},
 			"ATTACK":{"frames":[4,5,3,2,0,1],"spread":1.5,"mode":3,"transition":0,"pause":35}
@@ -214,7 +214,10 @@ class Enemy(Player):
 		if (self.completion_pause <= 0):
 			for modeOption in self.states.values():
 				if (self.mode == modeOption["mode"]):
-					self.draw(screen,modeOption["frames"],spread=modeOption["spread"])
+					if (modeOption == self.states["CHASE"]):
+						self.draw(screen,modeOption["frames"],spread=modeOption["spread"],special_flag=1,special_flag_params=[80,12])
+					else:
+						self.draw(screen,modeOption["frames"],spread=modeOption["spread"])
 					if (modeOption == self.states["FACE TARGET"]):
 						self.face_target(target_pos)
 						self.pocket_mode = modeOption["transition"]
