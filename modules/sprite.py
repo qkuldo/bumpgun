@@ -205,7 +205,7 @@ class Enemy(Player):
 		self.pocket_mode = None
 		self.attack_steps = 3
 		self.highest_step_num = 3
-		self.accuracy = 10
+		self.accuracy = 4
 		self.bullet_speed = 0.5
 	def special_update(self,screen,vel_change=[0,0],target_pos=(0,0)):
 		if (self.dmg_frames > 0):
