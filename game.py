@@ -99,7 +99,6 @@ def title():
 					pg.quit()
 					sys.exit()
 			elif (event.type == pg.MOUSEBUTTONDOWN):
-				#print("trejrhtjrjihji")
 				clicked = True
 				sound_effects["button click"].play()
 		screen.fill((30,30,30))
@@ -137,7 +136,6 @@ def gameover():
 					pg.quit()
 					sys.exit()
 			elif (event.type == pg.MOUSEBUTTONDOWN):
-				#print("trejrhtjrjihji")
 				clicked = True
 				sound_effects["button click"].play()
 		screen.fill((30,30,30))
@@ -176,7 +174,6 @@ def choose_map():
 					pg.quit()
 					sys.exit()
 			elif (event.type == pg.MOUSEBUTTONDOWN):
-				#print("trejrhtjrjihji")
 				clicked = True
 				sound_effects["button click"].play()
 		screen.fill((30,30,30))
@@ -422,7 +419,6 @@ def game():
 	fade()
 	global trauma
 	throw_arrow = pg.transform.scale(pg.image.load(assets["images"]["hud"]["throw arrow"]).convert_alpha(),(40,50)).convert_alpha()
-	#throw_arrow.set_alpha(225)
 	player = copy.copy(current_skin)
 	player = mods.Player(player,[300,300],1,(50,50),speed=0.8)
 	throw_arrow_rect = throw_arrow.get_rect(x=300,y=300)
@@ -455,7 +451,6 @@ def game():
 	fadein = True
 	enemies = []
 	effect_queue = []
-	#test_sprite = mods.Sprite(enemy_spritesheets[0],[300,300],1,(50,50))
 	hp_rect = pg.Rect(80,135,22,80)
 	hp_rect.center = (75,150)
 	enemies.append(mods.Enemy(enemy_spritesheets[0],[200,300],1,(50,50)))
@@ -475,34 +470,21 @@ def game():
 				pg.quit()
 				sys.exit()
 			elif (event.type == pg.MOUSEBUTTONDOWN):
-				#print("trejrhtjrjihji")
 				clicked = True
 				sound_effects["button click"].play()
 		keys = pg.key.get_pressed()
 		mouse_rect.center = pg.mouse.get_pos()
 		if (current_sequence == sequences["LEVELGAME"] and (not player.jumping) and (player.dmg_frames <= 0)):
 			player.face_target(mouse_rect.center)
-	#		test_sprite.face_target(mouse_rect.center)
 		if (current_sequence == sequences["LEVELINTRO"] and keys[pg.K_x]):
 			floor.angle = 360
 		if (current_sequence == sequences["LEVELGAME"] and keys[pg.K_SPACE] and player.paction_cooldown <= 0 and (not player.jumping)):
 			heading_timer = player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font)
 		elif (current_sequence == sequences["LEVELGAME"] and (keys[pg.K_LCTRL] or keys[pg.K_RCTRL]) and player.modechange_cooldown <= 0  and (not keys[pg.K_LEFT]) and (not keys[pg.K_RIGHT]) and (not keys[pg.K_SPACE]) and not player.jumping):
 			player.change_mode()
-		#TEST CODE
-		#if (keys[pg.K_v]):
-		#	enemies.append(mods.Enemy(enemy_spritesheets[0],[200,300],1,(50,50)))
-		#elif (keys[pg.K_y] and player.ammo > 0):
-		#	player.ammo -= 1
-		#elif (keys[pg.K_x] and player.hp > 0):
-		#	player.hp -= 1
-		#TEST CODE
-		#if (not player_dx > max_player_dx_right):
-		#	player_dx += 0.5
 		if (player.jumping):
 			trauma += 0.5
 		current_sequence = game_intro(floor,player,level_flash,sequences,current_sequence)
-	#	test_sprite.draw(screen,[3,4,2,0,1],spread=1.5)
 		update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration,enemy_projectiles)
 		if (current_sequence == sequences["LEVELGAME"]):
 			if (not trauma == 0):
