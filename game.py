@@ -7,6 +7,7 @@ import math
 import copy
 import os
 def startup():
+	#Initialize pygame module and game assets
 	global screen
 	global clock
 	global font_data
@@ -72,12 +73,15 @@ def startup():
 	player_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["player bullet"]),(15*2,25)).convert_alpha(),15,25)
 	fireball_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["fireball"]),(15*2,25)).convert_alpha(),15,25)
 def mainloop():
+	# Main game loop that handles the game flow.
 	title()
 def dropshadow(org_surf,org_pos,alpha=155,extension=10):
+	# Applies a drop shadow effect to the given surface
 	shadow = org_surf.copy()
 	shadow.set_alpha(alpha)
 	screen.blit(shadow, (org_pos[0],org_pos[1]+extension))
 def title():
+	# Display the game title screen and handles button interaction
 	global fullscreen
 	title_font = pg.font.Font("fonts/Quaptype.ttf", 80)
 	button_font = pg.font.Font("fonts/Quaptype.ttf", 30)
@@ -115,6 +119,7 @@ def title():
 		pg.display.update()
 		clock.tick(60)
 def gameover():
+	# Display the game over screen
 	global fullscreen
 	title_font = pg.font.Font("fonts/Quaptype.ttf", 80)
 	button_font = pg.font.Font("fonts/Quaptype.ttf", 30)
@@ -154,6 +159,7 @@ def gameover():
 		pg.display.update()
 		clock.tick(60)
 def choose_map():
+	# Display the HUD for choosing the map the player plays in and handles button interactions
 	title_font = pg.font.Font("fonts/Quaptype.ttf", 60)
 	button_font = pg.font.Font("fonts/Quaptype.ttf", 25)
 	title_img = title_font.render(font_data["headings"]["mapchoose"],True,(255,255,255)).convert_alpha()
@@ -200,28 +206,34 @@ def choose_map():
 		clock.tick(60)
 	game()
 def goto_angle(velocity,angle):
+	# Calculate the directional velocity vector based on angle.
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
 def screenshake():
+	# Gives a screenshake effect for 1 frame
 	global trauma
 	buffersurf = screen.copy()
 	screen.fill((30,30,30))
 	buffersurf = pg.transform.rotate(buffersurf,3*random.uniform(-trauma/trauma,trauma/trauma)*random.uniform(-1.0,1.0))
 	screen.blit(buffersurf, (0+(7*random.uniform(-trauma/trauma,trauma/trauma)*random.uniform(-1.0,1.0)),0+(7*random.uniform(-trauma/trauma,trauma/trauma)*random.uniform(-1.0,1.0))))
 def render_stack(surf,images,pos,rotation,spread=1,scale=()):
+	#Render a stack of rotated images with adjustable spread and scaling.
 	for i, img in enumerate(images):
 		rotated_img = pg.transform.rotate(img, rotation)
 		rotated_img.set_colorkey((0,0,0))
 		surf.blit(rotated_img, (pos[0] - rotated_img.get_width() // 2, pos[1] - rotated_img.get_height() // 2 - i * spread))
 def play(environment,track,loops = -1):
+	# Play background music for a specific environment and track.
 	pg.mixer.music.load(music[environment][track])
 	pg.mixer.music.play(loops)
 def refresh_particles(particles):
+	# Updates and renders particles
 	for location,particle in sorted(enumerate(particles),reverse=True):
 			is_die = particle.update(screen)
 			if (is_die):
 				particles.pop(location)
 def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence):
+	# Updates and renders projectiles, including interactions with enemies.
 	global trauma
 	for location,projectile in sorted(enumerate(projectiles),reverse=True):
 			hit_enemy = False
@@ -277,6 +289,7 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 						if (len(particles) < 50):
 							particles.append(mods.Particle(copy.copy(projectile.pos),[goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[0],goto_angle(random.randint(3,6),projectile.angle+random.randint(-4,4))[1]],time_max=2,time_min=1,color=(white_random+20,white_random-50,white_random-50),radius=random.randint(4,6),radius_decrease=0.03,shadow_color=(24,49,86)))
 def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
+	#Renders enemies and their behaviors, and handles behaviors, such as moving and attacking
 	global trauma
 	for location,enemy in sorted(enumerate(enemies),reverse=True):
 			if (not floor.hitbox.contains(enemy.hitbox)):
@@ -307,6 +320,7 @@ def refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles):
 					if (len(particles) < 50):
 						particles.append(mods.Particle(copy.copy(enemy.pos),[goto_angle(random.randint(3,6),random.randint(1,360))[0],goto_angle(random.randint(3,6),random.randint(1,360))[1]],time_max=5,time_min=2,color=(white_random-50,white_random+20,white_random-50),radius=random.randint(6,9),radius_decrease=0.03,shadow_color=(24,49,86)))
 def player_primary_action(screen,player,player_projectiles,screenshake_duration,particles,heading,heading_timer,heading_font):
+	#Handles the player's primary action (jumping and shooting).
 	global trauma
 	heading_return = 0
 	if (player.mode == 0 and player.dmg_frames <= 0 and not player.jumping):
@@ -337,6 +351,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 		screenshake_duration = 8
 	return heading_return
 def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
+	# Draw the HUD elements, including health, ammo, and special indicators.
 	level_flash.draw(screen)
 	if (current_sequence == sequences["LEVELGAME"]):
 		if (heading_timer > 0):
@@ -359,6 +374,7 @@ def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences
 		if (pg.mouse.get_focused()):
 			screen.blit(mouse_img, mouse_rect)
 def game_intro(floor,player,level_flash,sequences,current_sequence):
+	#Sets up code for the spinning level intro for every frame
 	if (current_sequence == sequences["LEVELINTRO"]):
 		if (floor.angle != 360):
 			floor.angle += 2
@@ -374,6 +390,7 @@ def game_intro(floor,player,level_flash,sequences,current_sequence):
 	else:
 		return sequences["LEVELGAME"]
 def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration,enemy_projectiles):
+	# Updates and renders all game entities and effects.`
 	if (not floor.hitbox.contains(player.hitbox)):
 		player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,particles)
 	else:
@@ -392,6 +409,7 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 		player.muzzle = 10
 	hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
 def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,particles):
+	# Handle player collision with walls
 	global trauma
 	if (not player.on_wall):
 		sound_effects["wall hit"].play()
@@ -416,6 +434,7 @@ def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,part
 		player.pos[1] += 2
 	player.vel = [0,0]
 def game():
+	# Core game logic and setup for each game session.
 	fade()
 	global trauma
 	throw_arrow = pg.transform.scale(pg.image.load(assets["images"]["hud"]["throw arrow"]).convert_alpha(),(40,50)).convert_alpha()

@@ -6,14 +6,17 @@ import copy
 #draw special flags include:
 #1 = change alpha of frame to index 0 in flag parameter list. index 1 can be used to find frames to change alpha to for read types 0 & 2
 def render_stack(surf,images,pos,rotation,spread=1,scale=()):
+	# Render a stack of rotated images with adjustable spread and scaling.
 	for i, img in enumerate(images):
 		rotated_img = pg.transform.rotate(img, rotation)
 		rotated_img.set_colorkey((0,0,0))
 		surf.blit(rotated_img, (pos[0] - rotated_img.get_width() // 2, pos[1] - rotated_img.get_height() // 2 - i * spread))
 def goto_angle(velocity,angle):
+	# Calculates a directional vector based on velocity and angle.`
 	direction = pg.Vector2(0, velocity).rotate(-angle)
 	return direction
 class Sprite:
+	"""Class for managing sprite properties and behaviors"""
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=1,oscillate=False):
 		self.pos = list(pos)
 		self.speed = speed
@@ -47,6 +50,7 @@ class Sprite:
 	def scale(self,newsize):
 		self.img_size = newsize
 	def update(self,vel_change=[0,0]):
+		#Updates the sprite's position and handles oscillation if enabled.
 		self.vel[0] += vel_change[0]
 		self.vel[1] += vel_change[1]
 		if (self.oscillate):
@@ -64,11 +68,13 @@ class Sprite:
 			self.pos[1] += self.vel[1]
 		self.hitbox.center = self.pos
 	def new_stack(self,img,location=0):
+		#Adds a new image to the stack list
 		if (location == 0):
 			self.other_spritestack_img_bot.append(img)
 		else:
 			self.other_spritestack_img_top.append(img)
 	def draw(self,screen,frames=[0],spread=1.5,special_flag=0,special_flag_params=[]):
+		#Renders the sprite on screen with optional flags.
 		if (not self.invisible):
 			if (self.read_img == 0):
 				blt_frame = pg.transform.scale(pg.transform.rotate(self.image.load_frame(frames[0]),self.angle),self.img_size)
@@ -99,8 +105,10 @@ class Sprite:
 				circle_surf = pg.Surface((15,15))
 				pg.draw.circle(screen,(255,255,255),self.pos,5)
 	def copy(self):
+		#Returns a copy of self
 		return Sprite(self.image,self.pos,self.render_type,(self.hitbox.width,self.hitbox.height),self.angle,self.speed)
 	def face_target(self,targetpos,face=True):
+		#Changes sprite's angle to face a certain position
 		pdir = (targetpos[0]-self.pos[0],targetpos[1]-self.pos[1])
 		length = math.hypot(*pdir)
 		if (length == 0.0):
@@ -111,16 +119,25 @@ class Sprite:
 			self.angle = math.degrees(math.atan2(-pdir[0],-pdir[1]))
 		return math.atan2(-pdir[0],-pdir[1])
 class Projectile(Sprite):
+	"""
+	Class for managing projectile properties and behaviors.
+	Child class of Sprite class.
+	"""
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=50,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,oscillate)
 		self.life = life
 	def update_life(self):
+		#Updates life attribute of projectile
 		self.life -= 1
 		if (self.life > 0):
 			return False
 		else:
 			return True
 class Player(Sprite):
+	"""
+	Class for the player character, including health, ammo, and unique behaviors.
+	Child class of the Sprite class.
+	"""
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0,life=20,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,oscillate)
 		self.hp = life
@@ -192,6 +209,10 @@ class Player(Sprite):
 		self.modechange_cooldown = 15
 		self.paction_cooldown = 0
 class Enemy(Player):
+	"""
+	Class for enemy characters, extending player behavior with AI states.
+	Child class of the Player class.
+	"""
 	def __init__(self,image,pos,render_type=0,size=(5,5),angle = 0,speed=0.4,life=5,oscillate=False):
 		super().__init__(image,pos,render_type,size,angle,speed,life,oscillate)
 		self.states = {
