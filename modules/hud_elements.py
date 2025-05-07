@@ -2,12 +2,6 @@ import pygame as pyg
 import random
 import os
 random.seed(os.times()[1])
-class Title_Circle:
-	def __init__(self,y):
-		self.center = (1,y)
-		self.radius = random.randint(10,50)
-	def draw(self, screen):
-		pyg.draw.circle(screen,(255,255,255), self.center, self.radius, 1)
 class Button:
 	"""
 	Class for creating and managing buttons in the HUD.
