@@ -48,7 +48,7 @@ def startup():
 	asset_file = open("assets/reference.json")
 	assets = json.load(asset_file)
 	pg.display.set_caption("BumpGun by qkuldo")
-	floor = mods.Sprite(mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["environment"]["factory floor"]), (360*3,360)),360,360),[300,300],0,(360,360))
+	floor = mods.Sprite(mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["environment"]["factory floor"]), (360*5,360)),360,360),[300,300],0,(360,360))
 	lights = pg.transform.scale(pg.image.load(assets["images"]["environment"]["lights"]), (430,430)).convert_alpha()
 	skins = []
 	outlines = []
@@ -112,6 +112,7 @@ def title():
 		hover = start_button.detect_hover(mouse_rect,button_font.render(font_data["buttons"]["startgame"],True,(255,255,255)),clicked)
 		dropshadow(start_button.text,(start_button.textrect.x,start_button.textrect.y),extension=3,alpha=80)
 		start_button.draw(screen)
+		FPS_counter()
 		if (pg.mouse.get_focused() and not hover):
 			screen.blit(mouse_img, mouse_rect)
 		elif (pg.mouse.get_focused() and hover):
@@ -152,6 +153,7 @@ def gameover():
 			break
 		dropshadow(back_to_title_button.text,(back_to_title_button.textrect.x,back_to_title_button.textrect.y),extension=3,alpha=80)
 		back_to_title_button.draw(screen)
+		FPS_counter()
 		if (pg.mouse.get_focused() and not hover):
 			screen.blit(mouse_img, mouse_rect)
 		elif (pg.mouse.get_focused() and hover):
@@ -196,6 +198,7 @@ def choose_map():
 		title.draw(screen)
 		dropshadow(factory_button.text,(factory_button.textrect.x,factory_button.textrect.y),extension=3,alpha=80)
 		factory_button.draw(screen)
+		FPS_counter()
 		if (pg.mouse.get_focused() and not render_Ffloor):
 			screen.blit(mouse_img, mouse_rect)
 		elif (pg.mouse.get_focused() and render_Ffloor):
@@ -352,6 +355,7 @@ def player_primary_action(screen,player,player_projectiles,screenshake_duration,
 	return heading_return
 def hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect):
 	# Draw the HUD elements, including health, ammo, and special indicators.
+	FPS_counter()
 	level_flash.draw(screen)
 	if (current_sequence == sequences["LEVELGAME"]):
 		if (heading_timer > 0):
@@ -389,8 +393,15 @@ def game_intro(floor,player,level_flash,sequences,current_sequence):
 			return sequences["LEVELGAME"]
 	else:
 		return sequences["LEVELGAME"]
+def FPS_counter():
+	fps_counter_font = pg.font.Font("fonts/Quaptype.ttf", 20)
+	fps = round(clock.get_fps(),2)
+	fps_counter_surf = fps_counter_font.render("FPS:"+str(fps),True,(230,230,230))
+	screen.blit(fps_counter_surf, (0,0))
 def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,particles,player_projectiles,enemies,player,level_flash,ammo_sprite,shadow_hp_sprite,hp_rect,gun_power_sprite,mouse_img,mouse_rect,turn_cooldown,wall_hit_timer,screenshake_duration,enemy_projectiles):
-	# Updates and renders all game entities and effects.`
+	# Updates and renders all game entities and effects.
+	ceiling = floor.image.load_frame(3)
+	ceiling.set_alpha(80)
 	if (not floor.hitbox.contains(player.hitbox)):
 		player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,particles)
 	else:
@@ -400,14 +411,20 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 		heading.invisible = True
 	else:
 		heading.invisible = False
-	render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+	if (current_sequence == sequences["LEVELGAME"]):
+		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
+	else:
+		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2),floor.image.load_frame(3)],floor.hitbox.center,floor.angle,spread=4)
 	refresh_particles(particles)
-	refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence)
-	refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles)
-	player.special_update(screen)
+	if (current_sequence == sequences["LEVELGAME"]):
+		refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence)
+		refresh_enemies(screen,enemies,floor,particles,player,enemy_projectiles)
+		player.special_update(screen)
 	if (player.fired):
 		player.muzzle = 10
 	hud_draw(screen,level_flash,heading,heading_timer,current_sequence,sequences,player,ammo_sprite,hp_rect,shadow_hp_sprite,gun_power_sprite,mouse_img,mouse_rect)
+	if (current_sequence == sequences["LEVELGAME"]):
+		screen.blit(ceiling,(floor.hitbox.center[0],floor.hitbox.center[1]*4))
 def player_to_wall(player,turn_cooldown,wall_hit_timer,screenshake_duration,particles):
 	# Handle player collision with walls
 	global trauma
