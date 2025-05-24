@@ -48,7 +48,7 @@ def startup():
 	asset_file = open("assets/reference.json")
 	assets = json.load(asset_file)
 	pg.display.set_caption("BumpGun by qkuldo")
-	floor = mods.Sprite(mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["environment"]["factory floor"]), (360*5,360)),360,360),[300,300],0,(360,360))
+	floor = mods.Sprite(mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["environment"]["factory floor"]), (360*6,360)),360,360),[300,300],0,(360,360))
 	lights = pg.transform.scale(pg.image.load(assets["images"]["environment"]["lights"]), (430,430)).convert_alpha()
 	skins = []
 	outlines = []
@@ -414,7 +414,7 @@ def update_and_drawAll(sequences,current_sequence,heading,heading_timer,floor,pa
 	if (current_sequence == sequences["LEVELGAME"]):
 		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2)],floor.hitbox.center,floor.angle,spread=4)
 	else:
-		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2),floor.image.load_frame(3)],floor.hitbox.center,floor.angle,spread=4)
+		render_stack(screen,[floor.image.load_frame(0),floor.image.load_frame(1),floor.image.load_frame(1),floor.image.load_frame(2),floor.image.load_frame(5),floor.image.load_frame(3)],floor.hitbox.center,floor.angle,spread=4)
 	refresh_particles(particles)
 	if (current_sequence == sequences["LEVELGAME"]):
 		refresh_projectiles(screen,player_projectiles,enemies,floor,particles,enemy_projectiles,player,sequences,current_sequence)
