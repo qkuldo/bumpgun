@@ -2,13 +2,10 @@ import pygame as pyg
 import random
 import os
 random.seed(os.times()[1])
-class Title_Circle:
-	def __init__(self,y):
-		self.center = (1,y)
-		self.radius = random.randint(10,50)
-	def draw(self, screen):
-		pyg.draw.circle(screen,(255,255,255), self.center, self.radius, 1)
 class Button:
+	"""
+	Class for creating and managing buttons in the HUD.
+	"""
 	def __init__(self,text,pos,func):
 		#this code also supports icon buttons
 		self.text=text
@@ -19,6 +16,7 @@ class Button:
 		#run every loop
 		screen.blit(self.text,self.textrect)
 	def detect_hover(self,mouserect,change_onhover=None,clicked=False,immediate_call=True):
+		# Detect mouse hover over a button and handle click events.
 		#run every loop
 		if (self.textrect.colliderect(mouserect)):
 			if (change_onhover!=None):

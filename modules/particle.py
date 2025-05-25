@@ -1,6 +1,7 @@
 import pygame
 import random
 class Particle:
+	""" Class representing a particle with position, velocity, and life properties."""
 	def __init__(self,pos,velocity,gravity=0.1,time_max=6,time_min=4,color=(95,95,95),radius=5,radius_decrease=0.05,shadow_color=None):
 		self.pos = pos
 		self.velocity = velocity
@@ -11,6 +12,7 @@ class Particle:
 		self.radius_decrease = radius_decrease
 		self.shadow_color = shadow_color
 	def update(self,screen,shadow_offset=3):
+		# Updates the particle's position and size, and renders it on the screen.`
 		self.pos[0]+=self.velocity[0]
 		self.pos[1]+=self.velocity[1]
 		self.pos[1]+=self.gravity
