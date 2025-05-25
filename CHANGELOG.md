@@ -29,3 +29,12 @@ This is the first update with a ton of new changes.
 ## `v1.3.0-beta`
 * Redesigned Frogeia enemy and added new animations in PR #39
 * Edited `CHANGELOG.md` in PR #40
+## `v1.4.0-beta`
+- Redesigned the **Frogeia** enemy to have a more rounded shape and added transparent jump frame.
+- Redesigned some characters in the self-made `Quaptype` font.
+- Changed default enemy accuracy from 10 to 4.
+- Removed code comments with test code for cleanup purposes.
+- Added documentation comments to code files.
+- Removed the unused `Title Circle` class.
+- Added FPS counter and ceiling for level intro.
+- Added new section in `CHANGELOG.md` dedicated to `v1.4.0-beta`
