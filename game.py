@@ -70,7 +70,7 @@ def startup():
 	map_icons = (mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["hud"]["factory"]),(128*2,128)),128,128),)
 	ammo_bar = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["hud"]["ammo bar"]),(26*12,91)).convert_alpha(),26,91)
 	game_icons = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["hud"]["hud icons"]),(32*3,32)).convert_alpha(),32,32)
-	player_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["player bullet"]),(15*2,25)).convert_alpha(),15,25)
+	player_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["player bullet"]),(15*3,25)).convert_alpha(),15,25)
 	fireball_bullet = mods.Spritesheet(pg.transform.scale(pg.image.load(assets["images"]["projectiles"]["fireball"]),(15*2,25)).convert_alpha(),15,25)
 def mainloop():
 	# Main game loop that handles the game flow.
@@ -242,7 +242,7 @@ def refresh_projectiles(screen,projectiles,enemies,floor,particles,enemy_project
 			hit_enemy = False
 			is_die = projectile.update_life()
 			projectile.update(-goto_angle(projectile.speed,projectile.angle))
-			projectile.draw(screen,[1,0],spread=2)
+			projectile.draw(screen,[1,2,0],spread=2)
 			for enemy in enemies:
 				if (enemy.hitbox.colliderect(projectile.hitbox) and enemy.dmg_frames <= 0):
 					enemy.mode = 2
